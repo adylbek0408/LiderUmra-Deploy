@@ -1,41 +1,21 @@
-# Базовый образ с Python
-FROM python:3.11-slim as builder
+FROM python:3.10
+
+WORKDIR /app
 
 # Установка системных зависимостей
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
+RUN apt-get update && apt-get install -y \
     postgresql-client \
-    gcc \
-    python3-dev \
-    libpq-dev && \
-    rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/*
 
-# Установка рабочей директории
-WORKDIR /app
-
-# Копирование requirements.txt
+# Копирование requirements.txt и установка зависимостей
 COPY requirements.txt .
-
-# Установка зависимостей Python
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Финальный образ
-FROM python:3.11-slim
-
-# Копирование установленных пакетов из builder
-COPY --from=builder /usr/local/lib/python3.11/site-packages/ /usr/local/lib/python3.11/site-packages/
-COPY --from=builder /usr/local/bin/ /usr/local/bin/
-
-# Установка рабочей директории
-WORKDIR /app
+# Создание необходимых директорий
+RUN mkdir -p /app/static /app/media
 
 # Копирование проекта
 COPY . .
 
-# Создание непривилегированного пользователя
-RUN useradd -m appuser && chown -R appuser:appuser /app
-USER appuser
-
-# Команда запуска приложения
-CMD ["gunicorn", "UMRA.wsgi:application", "--bind", "0.0.0.0:8000"]
-
+# Установка прав
+RUN chmod +x manage.py
