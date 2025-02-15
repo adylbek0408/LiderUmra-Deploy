@@ -28,7 +28,7 @@ class DetailDescriptionViewSet(viewsets.ReadOnlyModelViewSet):
     search_fields = ['text']
     
 
-class FAQViewSet(viewsets.ModelViewSet):
+class FAQViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = FAQ.objects.all()
     serializer_class = FAQSerializer
 
