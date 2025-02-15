@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     'django_filters',
     'phonenumber_field',
     'corsheaders',
+    'drf_yasg',
 
     'apps.tour',
     'apps.crm',
@@ -216,3 +217,14 @@ CORS_ALLOW_HEADERS = [
 CORS_EXPOSE_HEADERS = ['Content-Length', 'X-CSRFToken']
 CORS_ALLOW_CREDENTIALS = True
 
+SWAGGER_SETTINGS = {
+    'SECURITY_DEFINITIONS': {
+        'Bearer': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header'
+        }
+    },
+    'USE_SESSION_AUTH': False,
+    'JSON_EDITOR': True,
+}
