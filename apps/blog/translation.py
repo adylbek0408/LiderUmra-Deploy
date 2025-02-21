@@ -1,5 +1,5 @@
 from modeltranslation.translator import register, TranslationOptions
-from .models import Blog, Lesson, DetailDescription, FAQ
+from apps.blog.models import Blog, Lesson, DetailDescription, FAQ
 
 @register(Blog)
 class BlogTranslationOptions(TranslationOptions):
