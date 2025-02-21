@@ -145,4 +145,16 @@ class Hotel(models.Model):
         indexes = [
             models.Index(fields=['city', 'stars']),
         ]
+
     
+class HotelImage(models.Model):
+    hotel = models.ForeignKey(Hotel, on_delete=models.CASCADE, related_name='hotel_images', verbose_name='Отель')
+    image = models.ImageField(upload_to='hotels/images/', verbose_name='Изображение')
+
+    def __str__(self):
+            return f"{self.hotel.name} - {self.image.name}"
+
+    class Meta:
+            verbose_name = 'Изображение отеля'
+            verbose_name_plural = 'Изображения отелей'
+

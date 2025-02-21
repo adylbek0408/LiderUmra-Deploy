@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Ajy, CategoryPackage, TourDate, Package, Hotel, PackageDetail
+from .models import Ajy, CategoryPackage, TourDate, Package, Hotel, PackageDetail, HotelImage
 
 
 class AjySerializer(serializers.ModelSerializer):
@@ -40,17 +40,24 @@ class PackageSerializer(serializers.ModelSerializer):
         depth = 1
 
 
+class HotelImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = HotelImage
+        fields = ['id', 'image', 'hotel']
+
+
 class HotelSerializer(serializers.ModelSerializer):
     category = CategoryPackageSerializer()
     city_display = serializers.CharField(source='get_city_display', read_only=True)
     stars_display = serializers.CharField(source='get_stars_display', read_only=True)
+    hotel_images = HotelImageSerializer(many=True, read_only=True)
 
     class Meta:
         model = Hotel
         fields = [
             'id', 'category', 'name', 'city', 'city_display',
             'stars', 'stars_display', 'distance_to_mosque',
-            'accommodation', 'meals', 'nights'
+            'accommodation', 'meals', 'nights', 'hotel_images'
         ]
 
 

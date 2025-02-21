@@ -1,11 +1,12 @@
 from rest_framework import viewsets, mixins
 from django_filters.rest_framework import DjangoFilterBackend
 from django_filters import rest_framework as filters
-from .models import Ajy, CategoryPackage, TourDate, Package, Hotel, PackageDetail
+from .models import Ajy, CategoryPackage, TourDate, Package, Hotel, PackageDetail, HotelImage
 from .serializers import (
     AjySerializer, CategoryPackageSerializer,
     TourDateSerializer, PackageSerializer, 
-    HotelSerializer, PackageDetailSerializer
+    HotelSerializer, PackageDetailSerializer, 
+    HotelImageSerializer, 
 )
 from rest_framework import status
 from rest_framework.response import Response
@@ -75,9 +76,17 @@ class PackageDetailViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, vie
             return super().list(request, *args, **kwargs)
 
 
-class HotelViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
-    queryset = Hotel.objects.all()
+class HotelViewSet(mixins.ListModelMixin, 
+                  mixins.RetrieveModelMixin, 
+                  viewsets.GenericViewSet):
     serializer_class = HotelSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['city', 'stars']
+    filterset_fields = ['city', 'stars', 'category']
     search_fields = ['name']
+
+    def get_queryset(self):
+        return Hotel.objects.select_related(
+            'category'
+        ).prefetch_related(
+            'hotel_images'
+        ).all()

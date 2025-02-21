@@ -2,6 +2,7 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -23,6 +24,7 @@ ALLOWED_HOSTS = ["*"]
 # Application definition
 
 INSTALLED_APPS = [
+    'modeltranslation',
     'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -43,9 +45,11 @@ INSTALLED_APPS = [
     'apps.blog',
 ]
 
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -111,13 +115,25 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ky'  # Default language code should match one in LANGUAGES
 
-TIME_ZONE = 'UTC'
+
+TIME_ZONE = "Asia/Bishkek"
 
 USE_I18N = True
 
+USE_L10N = True
+
 USE_TZ = True
+
+
+LANGUAGES = (
+    ('ky', 'Kyrgyz'),
+    ('ru', 'Russian'),
+)
+
+DEFAULT_LANGUAGE = 'ky'
+MODELTRANSLATION_DEFAULT_LANGUAGE = 'ky'
 
 
 STATIC_URL = 'static/'

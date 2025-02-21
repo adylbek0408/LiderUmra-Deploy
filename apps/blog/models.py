@@ -4,7 +4,9 @@ from apps.tour.models import BaseModel
 
 
 class Blog(BaseModel):
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')
+    name = models.CharField(max_length=255, verbose_name='Название:')
+    rich = RichTextField(verbose_name='Описание:', blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания:', null=True)
 
     def __str__(self):
         return self.name
@@ -15,7 +17,9 @@ class Blog(BaseModel):
 
 
 class Lesson(BaseModel):
-    created_at = models.DateTimeField(verbose_name='Дата создания', auto_now_add=True)
+    name = models.CharField(max_length=255, verbose_name='Название:')
+    rich = RichTextField(verbose_name='Описание:', blank=True, null=True)
+    created_at = models.DateTimeField(verbose_name='Дата создания:', auto_now_add=True, null=True)
 
 
     def __str__(self):

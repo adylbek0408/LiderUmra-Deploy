@@ -1,41 +1,61 @@
 from django.contrib import admin
 from django.utils.html import format_html
 from .models import Blog, Lesson, DetailDescription, FAQ
+from modeltranslation.admin import TranslationAdmin
 
 
-@admin.register(FAQ)
-class FAQAdmin(admin.ModelAdmin):
-    list_display = ("question",)  # Добавьте запятую, чтобы сделать кортеж
-    search_fields = ("question", "answer")
 
-
-class DetailDescriptionInline(admin.TabularInline):
+class DetailDescriptionInline(admin.StackedInline):
     model = DetailDescription
     extra = 1
-    fields = ['text', 'image']
+    fieldsets = (
+        ('Кыргызча', {
+            'fields': ('blog', 'text_ky', 'image')
+        }),
+        ('Русский', {
+            'fields': ('text_ru',)
+        }),
+    )
 
 
 @admin.register(Blog)
 class BlogAdmin(admin.ModelAdmin):
-    list_display = ['name', 'created_at', 'image']
-    list_filter = ['created_at']
-    exclude = ['video_url'] 
     inlines = [DetailDescriptionInline]
-
+    fieldsets = (
+        ('Кыргызча', {
+            'fields': ('name_ky', 'rich_ky', 'image',)
+        }),
+        ('Русский', {
+            'fields': ('name_ru', 'rich_ru',)
+        }),
+    )
 
 
 @admin.register(Lesson)
 class LessonAdmin(admin.ModelAdmin):
-    list_display = ['name', 'created_at']  # показываем в списке
-    fields = ['name', 'video_url', 'rich']  # теперь можем включить created_at
+    list_display = ['name_ky', 'name_ru', 'created_at']
+    search_fields = ['name_ky', 'name_ru', 'rich_ky', 'rich_ru']
     list_filter = ['created_at']
-    search_fields = ['name']
+    readonly_fields = ['created_at']
+    fieldsets = (
+        ('Кыргызча', {
+            'fields': ('name_ky', 'rich_ky', 'video_url')
+        }),
+        ('Русский', {
+            'fields': ('name_ru', 'rich_ru')
+        }),
+    )
 
 
-@admin.register(DetailDescription)
-class DetailDescriptionAdmin(admin.ModelAdmin):
-    list_display = ['blog', 'text']
-    fields = ['blog', 'text', 'image']
-    list_filter = ['blog']
-    search_fields = ['text']
-    raw_id_fields = ['blog']
+@admin.register(FAQ)
+class FAQAdmin(admin.ModelAdmin):
+    list_display = ['question_ky', 'question_ru']
+    search_fields = ['question_ky', 'question_ru', 'answer_ky', 'answer_ru']
+    fieldsets = (
+        ('Кыргызча', {
+            'fields': ('question_ky', 'answer_ky')
+        }),
+        ('Русский', {
+            'fields': ('question_ru', 'answer_ru')
+        }),
+    )
