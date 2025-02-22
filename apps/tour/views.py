@@ -1,12 +1,12 @@
 from rest_framework import viewsets, mixins
 from django_filters.rest_framework import DjangoFilterBackend
 from django_filters import rest_framework as filters
-from .models import Ajy, CategoryPackage, TourDate, Package, Hotel, PackageDetail, HotelImage
+from .models import Ajy, CategoryPackage, TourDate, Package, Hotel, PackageDetail, HotelImage, PackageDetailImage
 from .serializers import (
     AjySerializer, CategoryPackageSerializer,
     TourDateSerializer, PackageSerializer, 
     HotelSerializer, PackageDetailSerializer, 
-    HotelImageSerializer, 
+    HotelImageSerializer, PackageDetailImageSerializer,
 )
 from rest_framework import status
 from rest_framework.response import Response
@@ -58,22 +58,29 @@ class PackageViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.
 
 
 class PackageDetailViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
-    queryset = PackageDetail.objects.all()
+    queryset = PackageDetail.objects.select_related('category').prefetch_related('package_detail_images').only(
+        'id', 'category', 'detail_type'
+    )
     serializer_class = PackageDetailSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['detail_type']
 
     def list(self, request, *args, **kwargs):
-        detail_type = self.request.query_params.get('q', None)
+        detail_type = request.query_params.get('q')
+        queryset = self.get_queryset()
+
         if detail_type:
-            queryset = PackageDetail.objects.filter(detail_type=detail_type)
-            if queryset.exists():
-                serializer = PackageDetailSerializer(queryset, many=True)
-                return Response(serializer.data, status=status.HTTP_200_OK)
-            else:
+            queryset = queryset.filter(detail_type=detail_type)
+            if not queryset.exists():
                 raise NotFound("Детали с указанным типом не найдены")
-        else:
-            return super().list(request, *args, **kwargs)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class PackageDetailImageViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
+    queryset = PackageDetailImage.objects.select_related('package_detail').only('id', 'package_detail', 'image', 'video_url')
+    serializer_class = PackageDetailImageSerializer
 
 
 class HotelViewSet(mixins.ListModelMixin, 

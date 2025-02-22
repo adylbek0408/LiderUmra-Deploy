@@ -6,7 +6,8 @@ from .models import (
     Package,
     Hotel,
     PackageDetail,
-    HotelImage
+    HotelImage, 
+    PackageDetailImage,
 )
 from modeltranslation.admin import TranslationAdmin
 
@@ -101,15 +102,22 @@ class HotelAdmin(admin.ModelAdmin):
     )
 
 
+class PackageDetailImageInline(admin.StackedInline):
+    model = PackageDetailImage
+    extra = 1
+    fields = ['image', 'video_url']
+
+
 @admin.register(PackageDetail)
 class PackageDetailAdmin(admin.ModelAdmin):
     list_display = ('name', 'category', 'detail_type')
     search_fields = ('name', 'detail_type')
     list_filter = ('category', 'detail_type')
+    inlines = [PackageDetailImageInline]
 
     fieldsets = (
         ('Кыргызча', {
-            'fields': ('category', 'name_ky', 'rich_ky', 'image', 'video_url', 'detail_type')
+            'fields': ('category', 'name_ky', 'rich_ky', 'detail_type')
         }),
         ('Русский', {
             'fields': ('name_ru', 'rich_ru')

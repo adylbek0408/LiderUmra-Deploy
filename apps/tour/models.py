@@ -97,6 +97,17 @@ class PackageDetail(BaseModel):
         return f"{self.get_detail_type_display()}"
 
 
+class PackageDetailImage(BaseModel):
+    package_detail = models.ForeignKey(PackageDetail, on_delete=models.CASCADE, related_name='package_detail_images', verbose_name='Детали пакета')
+
+    def __str__(self):
+        return f"{self.package_detail.get_detail_type_display()} - {self.image.name}"
+    
+    class Meta:
+        verbose_name = 'Изображение детали пакета'
+        verbose_name_plural = 'Изображения деталей пакетов'
+
+
 class Hotel(models.Model):
     category = models.ForeignKey(CategoryPackage, on_delete=models.PROTECT, related_name='package_hotels', verbose_name='Категория')
 
@@ -145,7 +156,6 @@ class Hotel(models.Model):
         indexes = [
             models.Index(fields=['city', 'stars']),
         ]
-
     
 class HotelImage(models.Model):
     hotel = models.ForeignKey(Hotel, on_delete=models.CASCADE, related_name='hotel_images', verbose_name='Отель')

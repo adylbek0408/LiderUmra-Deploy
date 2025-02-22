@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Ajy, CategoryPackage, TourDate, Package, Hotel, PackageDetail, HotelImage
+from .models import Ajy, CategoryPackage, TourDate, Package, Hotel, PackageDetail, HotelImage, PackageDetailImage
 
 
 class AjySerializer(serializers.ModelSerializer):
@@ -61,11 +61,20 @@ class HotelSerializer(serializers.ModelSerializer):
         ]
 
 
+class PackageDetailImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PackageDetailImage
+        fields = ['id', 'image', 'video_url']
+
+
 class PackageDetailSerializer(serializers.ModelSerializer):
     category = CategoryPackageSerializer()
     detail_type_display = serializers.CharField(source='get_detail_type_display', read_only=True)
+    package_detail_images = PackageDetailImageSerializer(many=True, read_only=True)
+
 
     class Meta:
         model = PackageDetail
-        fields = ['id', 'category', 'name', 'rich', 'image', 'video_url', 'detail_type', 'detail_type_display']
+        fields = ['id', 'category', 'name', 'rich', 'detail_type', 'detail_type_display',
+         'package_detail_images']
 
