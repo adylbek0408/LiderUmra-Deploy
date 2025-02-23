@@ -55,3 +55,12 @@ class FAQ(models.Model):
     def __str__(self):
         return self.question
 
+
+
+class Photo(models.Model):
+    photo = models.ImageField(verbose_name='Картинка')
+
+    class Meta:
+        verbose_name = 'Фото'
+        verbose_name_plural = 'Фотогалерея'
+

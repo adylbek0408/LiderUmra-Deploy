@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.utils.html import format_html
-from .models import Blog, Lesson, DetailDescription, FAQ
+from .models import Blog, Lesson, DetailDescription, FAQ, Photo
 from modeltranslation.admin import TranslationAdmin
 
 
@@ -59,3 +59,8 @@ class FAQAdmin(admin.ModelAdmin):
             'fields': ('question_ru', 'answer_ru')
         }),
     )
+
+
+@admin.register(Photo)
+class PhotoAdmin(admin.ModelAdmin):
+    list_display = ['photo']

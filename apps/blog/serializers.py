@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Blog, Lesson, DetailDescription, FAQ
+from .models import Blog, Lesson, DetailDescription, FAQ, Photo
 
 
 class DetailDescriptionSerializer(serializers.ModelSerializer):
@@ -27,3 +27,9 @@ class FAQSerializer(serializers.ModelSerializer):
     class Meta:
         model = FAQ
         fields = ['id', 'question', 'answer']
+
+
+class PhotoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Photo
+        fields = ['id', 'photo']

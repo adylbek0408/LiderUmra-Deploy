@@ -117,7 +117,7 @@ class PackageDetailAdmin(admin.ModelAdmin):
 
     fieldsets = (
         ('Кыргызча', {
-            'fields': ('category', 'name_ky', 'rich_ky', 'detail_type')
+            'fields': ('category', 'detail_type' 'name_ky', 'rich_ky')
         }),
         ('Русский', {
             'fields': ('name_ru', 'rich_ru')

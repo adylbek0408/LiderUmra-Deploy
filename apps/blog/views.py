@@ -1,7 +1,7 @@
-from rest_framework import viewsets
+from rest_framework import viewsets, mixins
 from django_filters.rest_framework import DjangoFilterBackend
-from .models import Blog, Lesson, DetailDescription, FAQ
-from .serializers import BlogSerializer, LessonSerializer, DetailDescriptionSerializer, FAQSerializer
+from .models import Blog, Lesson, DetailDescription, FAQ, Photo
+from .serializers import BlogSerializer, LessonSerializer, DetailDescriptionSerializer, FAQSerializer, PhotoSerializer
 
 
 class BlogViewSet(viewsets.ReadOnlyModelViewSet):
@@ -31,5 +31,10 @@ class DetailDescriptionViewSet(viewsets.ReadOnlyModelViewSet):
 class FAQViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = FAQ.objects.all()
     serializer_class = FAQSerializer
+
+
+class PhotoViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
+    queryset = Photo.objects.only('id', 'photo')
+    serializer_class = PhotoSerializer
 
 
