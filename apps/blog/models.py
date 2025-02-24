@@ -8,9 +8,6 @@ class Blog(BaseModel):
     rich = RichTextField(verbose_name='Описание:', blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания:', null=True)
 
-    def __str__(self):
-        return self.name
-
     class Meta:
         verbose_name = 'Блог'
         verbose_name_plural = 'Блоги'
@@ -20,10 +17,6 @@ class Lesson(BaseModel):
     name = models.CharField(max_length=255, verbose_name='Название:')
     rich = RichTextField(verbose_name='Описание:', blank=True, null=True)
     created_at = models.DateTimeField(verbose_name='Дата создания:', auto_now_add=True, null=True)
-
-
-    def __str__(self):
-        return self.name
 
     class Meta:
         verbose_name = 'Урок'
@@ -38,9 +31,6 @@ class DetailDescription(models.Model):
     class Meta:
         verbose_name = "Полная информация"
         verbose_name_plural = "Полная информация"
-
-    def __str__(self):
-        return self.text
 
 
 class FAQ(models.Model):

@@ -93,15 +93,9 @@ class PackageDetail(BaseModel):
         verbose_name_plural = 'Детали пакетов'
         ordering = ['detail_type']
 
-    def __str__(self):
-        return f"{self.get_detail_type_display()}"
-
 
 class PackageDetailImage(BaseModel):
     package_detail = models.ForeignKey(PackageDetail, on_delete=models.CASCADE, related_name='package_detail_images', verbose_name='Детали пакета')
-
-    def __str__(self):
-        return f"{self.package_detail.get_detail_type_display()} - {self.image.name}"
     
     class Meta:
         verbose_name = 'Изображение детали пакета'
