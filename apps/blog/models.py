@@ -4,12 +4,12 @@ from apps.tour.models import BaseModel
 
 
 class Blog(BaseModel):
-    name = models.CharField(max_length=255, verbose_name='Название:')
+    title = models.CharField(max_length=255, verbose_name='Название:')
     rich = RichTextField(verbose_name='Описание:', blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания:', null=True)
 
-    def __str__:
-        return self.name
+    def __str__(self):
+        return self.title
 
     class Meta:
         verbose_name = 'Блог'
@@ -17,12 +17,12 @@ class Blog(BaseModel):
 
 
 class Lesson(BaseModel):
-    name = models.CharField(max_length=255, verbose_name='Название:')
+    title = models.CharField(max_length=255, verbose_name='Название:')
     rich = RichTextField(verbose_name='Описание:', blank=True, null=True)
     created_at = models.DateTimeField(verbose_name='Дата создания:', auto_now_add=True, null=True)
 
-    def __str__:
-        return self.name
+    def __str__(self):
+        return self.title
 
     class Meta:
         verbose_name = 'Урок'

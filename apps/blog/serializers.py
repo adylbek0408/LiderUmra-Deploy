@@ -13,13 +13,13 @@ class BlogSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Blog
-        fields = ['id', 'name', 'rich', 'created_at', 'image', 'desc_blogs']
+        fields = ['id', 'title', 'rich', 'created_at', 'image', 'desc_blogs']
 
 
 class LessonSerializer(serializers.ModelSerializer):
     class Meta:
         model = Lesson
-        fields = ['id', 'name', 'rich', 'created_at', 'video_url']
+        fields = ['id', 'title', 'rich', 'created_at', 'video_url']
 
 
 class FAQSerializer(serializers.ModelSerializer):

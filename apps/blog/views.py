@@ -8,16 +8,16 @@ class BlogViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Blog.objects.prefetch_related('desc_blogs').all()
     serializer_class = BlogSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['name', 'created_at']
-    search_fields = ['name']
+    filterset_fields = ['title', 'created_at']
+    search_fields = ['title']
 
 
 class LessonViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['name', 'created_at']
-    search_fields = ['name']
+    filterset_fields = ['title', 'created_at']
+    search_fields = ['title']
 
 
 class DetailDescriptionViewSet(viewsets.ReadOnlyModelViewSet):

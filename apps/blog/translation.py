@@ -3,11 +3,11 @@ from apps.blog.models import Blog, Lesson, DetailDescription, FAQ
 
 @register(Blog)
 class BlogTranslationOptions(TranslationOptions):
-    fields = ('name', 'rich',)
+    fields = ('title', 'rich',)
 
 @register(Lesson)
 class LessonTranslationOptions(TranslationOptions):
-    fields = ('name', 'rich',)
+    fields = ('title', 'rich',)
 
 @register(DetailDescription)
 class DetailDescriptionTranslationOptions(TranslationOptions):
