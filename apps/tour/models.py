@@ -67,7 +67,7 @@ class Package(models.Model):
         verbose_name_plural = 'Пакеты'
 
     def __str__(self):
-        return f"{self.name} ({self.tour_date})"
+        return f"{self.name} | {self.category} | ({self.tour_date})"
 
 
 class PackageDetail(BaseModel):
@@ -92,6 +92,9 @@ class PackageDetail(BaseModel):
         verbose_name = 'Детали пакета'
         verbose_name_plural = 'Детали пакетов'
         ordering = ['detail_type']
+
+    def __str__(self):
+        return dict(self.DETAIL_TYPES).get(self.detail_type, self.detail_type)
 
 
 class PackageDetailImage(BaseModel):
