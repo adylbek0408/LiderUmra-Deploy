@@ -33,7 +33,7 @@ class PackageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Package
         fields = [
-            'id', 'category', 'ajy', 'tour_date',
+            'id', 'place', 'category', 'ajy', 'tour_date',
             'name', 'image', 'description',
             'available_seats', 'is_active'
         ]

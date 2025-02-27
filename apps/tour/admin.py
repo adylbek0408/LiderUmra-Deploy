@@ -56,13 +56,13 @@ class TourDateAdmin(admin.ModelAdmin):
 
 @admin.register(Package)
 class PackageAdmin(admin.ModelAdmin):
-    list_display = ('name', 'category', 'ajy', 'is_active')
+    list_display = ('place', 'name', 'category', 'ajy', 'is_active')
     search_fields = ('name', 'description')
-    list_filter = ('category', 'is_active')
+    list_filter = ('place', 'category', 'is_active')
 
     fieldsets = (
         ('Кыргызча', {
-            'fields': ('category', 'ajy', 'tour_date', 'name_ky', 'image', 'description_ky',
+            'fields': ('place', 'category', 'ajy', 'tour_date', 'name_ky', 'image', 'description_ky',
             'available_seats', 'is_active')
         }),
         ('Русский', {

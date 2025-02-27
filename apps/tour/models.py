@@ -46,6 +46,15 @@ class TourDate(models.Model):
 
 
 class Package(models.Model):
+    BISHKEK = 'Bishkek'
+    OSH = 'Osh'
+    
+    PLACE = [
+        (BISHKEK, 'Бишкек'),
+        (OSH, 'Ош'),
+    ]
+    place = models.CharField(max_length=100, choices=PLACE, verbose_name='Филиал:')
+    
     category = models.ForeignKey(CategoryPackage, on_delete=models.PROTECT, related_name='packages', verbose_name='Категория')
     ajy = models.ForeignKey(Ajy, on_delete=models.PROTECT, related_name='packages', verbose_name='Ажы башчы')
     tour_date = models.ForeignKey(TourDate, on_delete=models.PROTECT, related_name='packages', verbose_name='Дата тура')
