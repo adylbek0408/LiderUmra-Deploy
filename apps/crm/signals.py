@@ -64,4 +64,4 @@ def notify_new_client(sender, instance, created, **kwargs):
 
         except Exception as e:
             logger.exception("Critical error in notification system: %s", str(e))
-    
+            

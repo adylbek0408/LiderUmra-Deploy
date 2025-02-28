@@ -1,3 +1,4 @@
+# crm/management/commands/bot.py
 import logging
 from django.core.management.base import BaseCommand
 from telegram.ext import Updater, CallbackQueryHandler
@@ -67,7 +68,7 @@ def handle_accept(update, context):
     except Exception as e:
         logger.exception("Critical error in handle_accept: %s", str(e))
         query.edit_message_text("❗ Ошибка, попробуйте позже")
-        
+
 
 class Command(BaseCommand):
     help = 'Run Telegram bot'
@@ -90,3 +91,4 @@ class Command(BaseCommand):
 
     def error_handler(self, update, context):
         logger.error(f'Update {update} caused error: {context.error}')
+        
