@@ -36,7 +36,7 @@ def handle_accept(update, context):
             client.save(update_fields=['status', 'manager', 'updated_at'])
 
             # Use manager's full name or username as fallback
-            manager_name = manager.user.get_full_name() or manager.user.username
+            manager_name = manager.get_display_name() 
             accept_text = (
                 f"✅ Принято менеджером: {manager_name}\n"
                 f"⏱ Время принятия: {client.updated_at.astimezone().strftime('%Y-%m-%d %H:%M')}"
@@ -61,7 +61,7 @@ def handle_accept(update, context):
     except Exception as e:
         logger.exception("Critical error in handle_accept: %s", str(e))
         query.edit_message_text("❗ Ошибка, попробуйте позже")
-        
+
 
 class Command(BaseCommand):
     help = 'Run Telegram bot'
