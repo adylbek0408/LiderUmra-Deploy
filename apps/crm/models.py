@@ -27,6 +27,7 @@ class Manager(models.Model):
         ordering = ['user__username']
 
     def get_display_name(self):
+        # Возвращаем username напрямую
         return self.user.username if self.user else "Неизвестный менеджер"
 
 
