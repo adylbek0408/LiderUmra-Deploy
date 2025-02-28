@@ -50,6 +50,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -152,6 +153,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
 TELEGRAM_GROUP_CHAT_ID = os.getenv('TELEGRAM_GROUP_CHAT_ID')
+TELEGRAM_GROUP_IDS = {
+    'Bishkek': '-4772065501',
+    'Osh': '-group_id2',
+}
 
 
 JAZZMIN_SETTINGS = {
@@ -218,10 +223,10 @@ JAZZMIN_UI_TWEAKS = {
 
 
 CORS_ALLOW_ALL_ORIGINS = False  # Запрещаем все, кроме указанных ниже
-CORS_ALLOWED_ORIGINS = [
+CORS_ORIGIN_WHITELIST = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
-    "https://your-frontend-domain.com",  # Продакшен-фронт
+    "https://your-frontend-domain.com",
 ]
 
 CORS_ALLOW_METHODS = [
@@ -235,6 +240,7 @@ CORS_ALLOW_HEADERS = [
 
 CORS_EXPOSE_HEADERS = ['Content-Length', 'X-CSRFToken']
 CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_ALL_ORIGINS = True
 
 SWAGGER_SETTINGS = {
     'SECURITY_DEFINITIONS': {

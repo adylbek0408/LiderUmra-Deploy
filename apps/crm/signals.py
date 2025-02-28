@@ -19,16 +19,21 @@ def notify_new_client(sender, instance, created, **kwargs):
                 logger.error("Client %d has no package assigned", instance.id)
                 return
 
-            # Prepare the message
+            branch = instance.package.place
+            chat_id = settings.TELEGRAM_GROUP_IDS.get(branch)
+            
+            if not chat_id:
+                logger.error("No group chat for branch %s", branch)
+                return
+
             message = (
-                f"📣 Новая заявка ({instance.package.place})❗️\n"
+                f"📣 Новая заявка ({branch})❗️\n"
                 f"👤 Имя: {instance.full_name}\n"
                 f"📞 Телефон: {instance.phone}\n"
                 f"🌍 Место: {instance.country}, {instance.city}\n"
                 f"📦 Пакет: {instance.package.name or 'Не указан'}"
             )
 
-            # Prepare the inline keyboard
             keyboard = [[
                 InlineKeyboardButton(
                     "✅ Принять заявку",
@@ -36,17 +41,17 @@ def notify_new_client(sender, instance, created, **kwargs):
                 )
             ]]
 
-            # Send the message to the group
             sent_message = bot.send_message(
-                chat_id=settings.TELEGRAM_GROUP_CHAT_ID,
+                chat_id=chat_id,
                 text=message,
                 reply_markup=InlineKeyboardMarkup(keyboard),
                 timeout=30
             )
 
-            # Save the message ID to the client (optional, if you want to track it)
+            instance.notification_chat_id = chat_id
             instance.notification_message_id = sent_message.message_id
-            instance.save(update_fields=['notification_message_id'])
+            instance.save(update_fields=['notification_chat_id', 'notification_message_id'])
 
         except Exception as e:
-            logger.exception("Critical error in notification system: %s", str(e))
+            logger.exception("Critical error: %s", str(e))
+    
