@@ -46,11 +46,6 @@ def handle_accept(update, context):
             client.manager = manager
             client.save(update_fields=['status', 'manager', 'updated_at'])
 
-            # Форматируем время с учетом часового пояса Django
-            from django.utils.timezone import localtime
-            local_time = localtime(client.updated_at)
-            accept_time = local_time.strftime("%Y-%m-%d %H:%M")
-            
             new_text = build_notification_text(client, manager)
             
             context.bot.edit_message_text(
@@ -63,6 +58,17 @@ def handle_accept(update, context):
     except Client.DoesNotExist:
         logger.error(f"Client not found: {client_id}")
         query.edit_message_text("❌ Заявка не найдена!")
+    except Manager.DoesNotExist:
+        logger.error(f"Manager not found: {query.from_user.id}")
+        query.edit_message_text("❌ Вы не зарегистрированы как менеджер!")
+    except KeyError as e:
+        logger.error(f"Group not found for branch: {e}")
+        query.edit_message_text("❌ Ошибка группы филиала")
+    except Exception as e:
+        # Логируем полную информацию об ошибке
+        logger.exception(f"Critical error: {str(e)}")
+        query.edit_message_text("❗ Ошибка, попробуйте позже. Администратор уже уведомлен.")
+
 
 class Command(BaseCommand):
     help = 'Run Telegram bot'
