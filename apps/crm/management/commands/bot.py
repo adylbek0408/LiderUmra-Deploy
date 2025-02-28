@@ -19,46 +19,48 @@ def handle_accept(update, context):
 
     try:
         with transaction.atomic():
-            # Lock client row and related manager
-            client = Client.objects.select_for_update().get(id=client_id)
+            # Lock client and related data
+            client = Client.objects.select_for_update().select_related('package').get(id=client_id)
             manager = Manager.objects.select_for_update().get(
                 telegram_id=str(query.from_user.id)
             )
 
+            # Check if client is already taken
             if client.status != 'new':
                 query.edit_message_text("⚠️ Заявка уже принята другим менеджером!")
                 return
 
-            # Update client status
+            # Verify manager's branch matches the client's branch
+            if manager.branch != client.package.place:
+                query.edit_message_text("❌ Эта заявка не для вашего филиала!")
+                logger.error(f"Manager {manager} tried to accept client from another branch")
+                return
+
+            # Update client
             client.status = 'processing'
             client.manager = manager
             client.save()
 
-            # Update message in Telegram
+            # Notify manager and update message
             accept_text = (
-                f"✅ Принято менеджером: {manager}\n" 
+                f"✅ Принято менеджером: {manager}\n"
                 f"⏱ Время принятия: {client.updated_at.strftime('%Y-%m-%d %H:%M')}"
-                )
+            )
             query.edit_message_text(
                 text=f"{accept_text}\n\n{query.message.text}",
                 reply_markup=None
             )
-
-            # Send confirmation to manager
             context.bot.send_message(
                 chat_id=manager.telegram_id,
-                text=f"Вы успешно приняли заявку:\n{client.full_name}\nТел: {client.phone}"
+                text=f"Вы приняли заявку:\n{client.full_name}\nТел: {client.phone}"
             )
 
-    except Client.DoesNotExist:
-        query.edit_message_text("❌ Заявка не найдена!")
-        logger.error(f"Client not found: {client_id}")
-    except Manager.DoesNotExist:
-        query.edit_message_text("❌ Вы не зарегистрированы как менеджер!")
-        logger.error(f"Manager not found: {query.from_user.id}")
+    except (Client.DoesNotExist, Manager.DoesNotExist) as e:
+        query.edit_message_text("❌ Ошибка: данные не найдены!")
+        logger.error(str(e))
     except Exception as e:
         logger.error(f"Error: {str(e)}")
-        query.edit_message_text("❗ Произошла ошибка, попробуйте позже")
+        query.edit_message_text("❗ Ошибка, попробуйте позже")
 
 
 class Command(BaseCommand):

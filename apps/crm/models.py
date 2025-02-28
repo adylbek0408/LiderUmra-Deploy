@@ -14,6 +14,12 @@ class Manager(models.Model):
     phone = PhoneNumberField(verbose_name='Номер телефона', 
                            region='KG',
                            help_text='Пример: +996555123456')
+    branch = models.CharField(
+        max_length=100,
+        choices=Package.PLACE,
+        verbose_name='Филиал',
+        default=Package.BISHKEK  # Optional default
+    )
 
     class Meta:
         verbose_name = 'Менеджер'
