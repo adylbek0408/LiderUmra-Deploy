@@ -152,10 +152,10 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
-TELEGRAM_GROUP_CHAT_ID = os.getenv('TELEGRAM_GROUP_CHAT_ID')
+
 TELEGRAM_GROUP_IDS = {
-    'Bishkek': '-4772065501',
-    'Osh': '-4770989660',
+    'Bishkek': os.environ.get('TELEGRAM_GROUP_BISHKEK'),
+    'Osh': os.environ.get('TELEGRAM_GROUP_OSH'),
 }
 
 

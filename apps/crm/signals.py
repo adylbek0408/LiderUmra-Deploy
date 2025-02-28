@@ -1,11 +1,9 @@
-# apps/crm/signals.py
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.conf import settings
 from telegram import Bot, InlineKeyboardButton, InlineKeyboardMarkup
-import telegram
 import logging
-from .models import Client, Manager
+from .models import Client
 
 logger = logging.getLogger(__name__)
 
@@ -15,17 +13,21 @@ def notify_new_client(sender, instance, created, **kwargs):
         try:
             bot = Bot(token=settings.TELEGRAM_BOT_TOKEN)
 
+            # Проверяем, что у клиента есть пакет
             if not instance.package:
                 logger.error("Client %d has no package assigned", instance.id)
                 return
 
+            # Получаем филиал из пакета
             branch = instance.package.place
+
+            # Получаем chat_id для филиала
             chat_id = settings.TELEGRAM_GROUP_IDS.get(branch)
-            
             if not chat_id:
                 logger.error("No group chat for branch %s", branch)
                 return
 
+            # Подготавливаем сообщение
             message = (
                 f"📣 Новая заявка ({branch})❗️\n"
                 f"👤 Имя: {instance.full_name}\n"
@@ -34,6 +36,7 @@ def notify_new_client(sender, instance, created, **kwargs):
                 f"📦 Пакет: {instance.package.name or 'Не указан'}"
             )
 
+            # Подготавливаем кнопку "Принять заявку"
             keyboard = [[
                 InlineKeyboardButton(
                     "✅ Принять заявку",
@@ -41,17 +44,14 @@ def notify_new_client(sender, instance, created, **kwargs):
                 )
             ]]
 
-            sent_message = bot.send_message(
+            # Отправляем сообщение в группу филиала
+            bot.send_message(
                 chat_id=chat_id,
                 text=message,
                 reply_markup=InlineKeyboardMarkup(keyboard),
                 timeout=30
             )
 
-            instance.notification_chat_id = chat_id
-            instance.notification_message_id = sent_message.message_id
-            instance.save(update_fields=['notification_chat_id', 'notification_message_id'])
-
         except Exception as e:
-            logger.exception("Critical error: %s", str(e))
+            logger.exception("Critical error in notification system: %s", str(e))
     
