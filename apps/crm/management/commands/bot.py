@@ -14,8 +14,8 @@ def handle_accept(update, context):
     
     try:
         client_id = int(query.data.split('_')[1])
-    except (IndexError, ValueError) as e:
-        logger.error("Invalid callback data: %s | Error: %s", query.data, str(e))
+    except (IndexError, ValueError):
+        logger.error("Invalid callback data: %s", query.data)
         return
 
     try:
@@ -24,19 +24,19 @@ def handle_accept(update, context):
             manager = Manager.objects.get(telegram_id=str(query.from_user.id))
 
             if client.status != 'new':
-                logger.warning("Client %d already processed. Status: %s", client_id, client.status)
                 query.edit_message_text("⚠️ Заявка уже принята другим менеджером!")
                 return
 
             if manager.branch != client.package.place:
-                logger.error("Branch mismatch: Manager %s vs Client %s", manager.branch, client.package.place)
                 query.edit_message_text("❌ Эта заявка не для вашего филиала!")
                 return
 
             client.status = 'processing'
             client.manager = manager
             client.save(update_fields=['status', 'manager', 'updated_at'])
-            
+
+            # Use manager's full name or username as fallback
+            manager_name = manager.user.get_full_name() or manager.user.username
             accept_text = (
                 f"✅ Принято менеджером: {manager_name}\n"
                 f"⏱ Время принятия: {client.updated_at.astimezone().strftime('%Y-%m-%d %H:%M')}"
@@ -51,17 +51,17 @@ def handle_accept(update, context):
                 chat_id=manager.telegram_id,
                 text=f"Вы приняли заявку:\n{client.full_name}\nТел: {client.phone}"
             )
-            logger.info("Successfully processed client %d by manager %s", client_id, manager.telegram_id)
 
     except Client.DoesNotExist:
-        logger.error("Client %d not found", client_id)
+        logger.error("Client not found: %d", client_id)
         query.edit_message_text("❌ Заявка не найдена!")
     except Manager.DoesNotExist:
-        logger.error("Manager with Telegram ID %s not found", query.from_user.id)
+        logger.error("Manager not found: %s", query.from_user.id)
         query.edit_message_text("❌ Вы не зарегистрированы как менеджер!")
     except Exception as e:
-        logger.exception("Critical error: %s", str(e))
+        logger.exception("Critical error in handle_accept: %s", str(e))
         query.edit_message_text("❗ Ошибка, попробуйте позже")
+        
 
 class Command(BaseCommand):
     help = 'Run Telegram bot'
