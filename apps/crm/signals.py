@@ -16,12 +16,23 @@ def notify_new_client(sender, instance, created, **kwargs):
             bot = Bot(token=settings.TELEGRAM_BOT_TOKEN)
             
             if not instance.package:
+                logger.warning("Client %d has no package", instance.id)
                 return
                 
             branch = instance.package.place
             managers = Manager.objects.filter(branch=branch)
 
-            keyboard = [[InlineKeyboardButton("✅ Принять заявку", callback_data=f"accept_{instance.id}")]]
+            if not managers.exists():
+                logger.error("No managers for branch: %s", branch)
+                return
+
+            keyboard = [[
+                InlineKeyboardButton(
+                    "✅ Принять заявку",
+                    callback_data=f"accept_{instance.id}"
+                )
+            ]]
+            
             message = (
                 f"📣 Новая заявка ({branch})❗️\n"
                 f"👤 Имя: {instance.full_name}\n"
@@ -32,17 +43,25 @@ def notify_new_client(sender, instance, created, **kwargs):
 
             for manager in managers:
                 try:
-                    # Verify chat is possible
+                    # Check chat first
                     bot.get_chat(chat_id=manager.telegram_id)
+                    
+                    # Send message with 30s timeout
                     bot.send_message(
                         chat_id=manager.telegram_id,
                         text=message,
-                        reply_markup=InlineKeyboardMarkup(keyboard)
+                        reply_markup=InlineKeyboardMarkup(keyboard),
+                        read_timeout=30,
+                        write_timeout=30,
+                        connect_timeout=30
                     )
                 except telegram.error.Unauthorized:
-                    logger.error(f"Manager {manager} hasn't started chat with bot")
+                    logger.error("Manager %s blocked the bot", manager.telegram_id)
+                except telegram.error.TimedOut:
+                    logger.warning("Timeout sending to manager %s", manager.telegram_id)
                 except Exception as e:
-                    logger.error(f"Error messaging manager {manager}: {str(e)}")
+                    logger.error("Failed to notify manager %s: %s", manager.telegram_id, str(e))
 
         except Exception as e:
-            logger.error(f"Notification system error: {str(e)}")
+            logger.exception("Critical error in notification system: %s", str(e))
+    

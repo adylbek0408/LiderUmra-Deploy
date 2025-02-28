@@ -14,54 +14,60 @@ def handle_accept(update, context):
     try:
         client_id = int(query.data.split('_')[1])
     except (IndexError, ValueError):
-        logger.error("Invalid callback data")
+        logger.error("Invalid callback data: %s", query.data)
         return
 
     try:
         with transaction.atomic():
-            # Lock client and related data
-            client = Client.objects.select_for_update().select_related('package').get(id=client_id)
-            manager = Manager.objects.select_for_update().get(
-                telegram_id=str(query.from_user.id)
-            )
+            # Eager load related data
+            client = Client.objects.select_related('package').get(id=client_id)
+            manager = Manager.objects.get(telegram_id=str(query.from_user.id))
 
-            # Check if client is already taken
+            # Validate client status FIRST
             if client.status != 'new':
                 query.edit_message_text("⚠️ Заявка уже принята другим менеджером!")
                 return
 
-            # Verify manager's branch matches the client's branch
+            # Verify branch match
             if manager.branch != client.package.place:
+                logger.warning("Branch mismatch: manager %s vs client %s", 
+                              manager.branch, client.package.place)
                 query.edit_message_text("❌ Эта заявка не для вашего филиала!")
-                logger.error(f"Manager {manager} tried to accept client from another branch")
                 return
 
             # Update client
             client.status = 'processing'
             client.manager = manager
-            client.save()
+            client.save(update_fields=['status', 'manager', 'updated_at'])
 
-            # Notify manager and update message
+            # Format acceptance message
             accept_text = (
-                f"✅ Принято менеджером: {manager}\n"
-                f"⏱ Время принятия: {client.updated_at.strftime('%Y-%m-%d %H:%M')}"
+                f"✅ Принято менеджером: {manager.user.get_full_name() or manager.user.username}\n"
+                f"⏱ Время принятия: {client.updated_at.astimezone().strftime('%Y-%m-%d %H:%M')}"
             )
+            
+            # Edit original message
             query.edit_message_text(
                 text=f"{accept_text}\n\n{query.message.text}",
                 reply_markup=None
             )
+            
+            # Send confirmation to manager
             context.bot.send_message(
                 chat_id=manager.telegram_id,
                 text=f"Вы приняли заявку:\n{client.full_name}\nТел: {client.phone}"
             )
 
-    except (Client.DoesNotExist, Manager.DoesNotExist) as e:
-        query.edit_message_text("❌ Ошибка: данные не найдены!")
-        logger.error(str(e))
+    except Client.DoesNotExist:
+        logger.error("Client not found: %d", client_id)
+        query.edit_message_text("❌ Заявка не найдена!")
+    except Manager.DoesNotExist:
+        logger.error("Manager not found: %s", query.from_user.id)
+        query.edit_message_text("❌ Вы не зарегистрированы как менеджер!")
     except Exception as e:
-        logger.error(f"Error: {str(e)}")
+        logger.exception("Critical error in handle_accept: %s", str(e))
         query.edit_message_text("❗ Ошибка, попробуйте позже")
-
+        
 
 class Command(BaseCommand):
     help = 'Run Telegram bot'
