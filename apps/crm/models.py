@@ -27,7 +27,7 @@ class Manager(models.Model):
         ordering = ['user__username']
 
     def get_display_name(self):
-        return self.user.username
+        return self.user.username if self.user else "Неизвестный менеджер"
 
 
 class Client(models.Model):

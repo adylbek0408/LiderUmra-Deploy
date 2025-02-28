@@ -1,4 +1,3 @@
-# apps/crm/management/commands/bot.py
 import logging
 from django.core.management.base import BaseCommand
 from telegram.ext import Updater, CallbackQueryHandler
