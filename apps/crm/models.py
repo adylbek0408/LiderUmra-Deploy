@@ -26,17 +26,8 @@ class Manager(models.Model):
         verbose_name_plural = 'Менеджеры'
         ordering = ['user__username']
 
-    def get_display_name(self):
-    # Добавляем проверку на пустые строки с пробелами
-        full_name = self.user.get_full_name().strip()
-        username = self.user.username.strip()
-        if full_name:
-            return full_name
-        elif username:
-            return username
-        else:
-        # Используем Telegram ID как запасной вариант
-            return f"Менеджер (TG: {self.telegram_id})"
+    ddef get_display_name(self):
+        return self.user.username
 
 
 class Client(models.Model):

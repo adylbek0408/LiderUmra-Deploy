@@ -35,11 +35,11 @@ def handle_accept(update, context):
             client.manager = manager
             client.save(update_fields=['status', 'manager', 'updated_at'])
 
-            manager_name = manager.get_display_name() 
+            manager_name = manager.get_display_name()
             accept_text = (
-                f"✅ Принято менеджером: {manager.get_display_name()}\n"  # Changed here
+                f"✅ Принято менеджером: {manager_name}\n"  
                 f"⏱ Время принятия: {client.updated_at.astimezone().strftime('%Y-%m-%d %H:%M')}"
-                )
+            )
             
             query.edit_message_text(
                 text=f"{accept_text}\n\n{query.message.text}",
@@ -48,7 +48,7 @@ def handle_accept(update, context):
             
             context.bot.send_message(
                 chat_id=manager.telegram_id,
-                text=f"Вы приняли заявку:\n{client.full_name}\nТел: {client.phone}"
+                text=f"{client.full_name}\n{client.phone}"
             )
 
     except Client.DoesNotExist:
@@ -75,4 +75,4 @@ class Command(BaseCommand):
 
     def error_handler(self, update, context):
         logger.error('Update "%s" caused error: %s', update, context.error)
-        
+    
