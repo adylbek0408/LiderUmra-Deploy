@@ -26,7 +26,7 @@ class Manager(models.Model):
         verbose_name_plural = 'Менеджеры'
         ordering = ['user__username']
 
-    ddef get_display_name(self):
+    def get_display_name(self):
         return self.user.username
 
 
