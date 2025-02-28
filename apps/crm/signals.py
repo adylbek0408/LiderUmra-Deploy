@@ -4,7 +4,7 @@ from django.dispatch import receiver
 from django.conf import settings
 from telegram import Bot, InlineKeyboardButton, InlineKeyboardMarkup
 import logging
-from .models import Client
+from .models import Client, Manager
 
 logger = logging.getLogger(__name__)
 
