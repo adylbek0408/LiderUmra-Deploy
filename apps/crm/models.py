@@ -6,7 +6,7 @@ from apps.tour.models import Package
 
 class Manager(models.Model):
     fio = models.CharField(  # Новое поле вместо User
-        max_length=255,
+        max_length=155,
         verbose_name='ФИО менеджера'
     )
     telegram_id = models.CharField(max_length=100, 
@@ -25,7 +25,6 @@ class Manager(models.Model):
     class Meta:
         verbose_name = 'Менеджер'
         verbose_name_plural = 'Менеджеры'
-        ordering = ['user__username']
 
     def get_display_name(self):
         return self.fio  

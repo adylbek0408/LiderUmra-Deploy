@@ -17,7 +17,7 @@ class ClientAdmin(admin.ModelAdmin):
 
 @admin.register(Manager)
 class ManagerAdmin(admin.ModelAdmin):
-    list_display = ('user', 'formatted_phone')
+    list_display = ('fio', 'branch', 'formatted_phone')
 
     def formatted_phone(self, obj):
         return obj.phone.format_as("international")

@@ -3,7 +3,7 @@ from .models import Manager, Client
 from .serializers import ManagerSerializer, ClientSerializer, ClientCreateSerializer
 
 class ManagerViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Manager.objects.select_related('user')
+    queryset = Manager.objects.all()
     serializer_class = ManagerSerializer
     permission_classes = [permissions.IsAdminUser]
 
