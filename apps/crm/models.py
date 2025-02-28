@@ -26,8 +26,8 @@ class Manager(models.Model):
         verbose_name_plural = 'Менеджеры'
         ordering = ['user__username']
 
-    def __str__(self):
-        return f"{self.user.get_full_name() or self.user.username}"
+    def get_display_name(self):
+        return self.user.get_full_name() or self.user.username or f"Manager {self.id}"
 
 
 class Client(models.Model):

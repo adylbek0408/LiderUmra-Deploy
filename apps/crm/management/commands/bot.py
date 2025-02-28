@@ -38,7 +38,7 @@ def handle_accept(update, context):
             client.save(update_fields=['status', 'manager', 'updated_at'])
             
             accept_text = (
-                f"✅ Принято менеджером: {manager.user.get_full_name() or manager.user.username}\n"
+                f"✅ Принято менеджером: {manager_name}\n"
                 f"⏱ Время принятия: {client.updated_at.astimezone().strftime('%Y-%m-%d %H:%M')}"
             )
             
