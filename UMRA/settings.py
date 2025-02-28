@@ -155,7 +155,7 @@ TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
 TELEGRAM_GROUP_CHAT_ID = os.getenv('TELEGRAM_GROUP_CHAT_ID')
 TELEGRAM_GROUP_IDS = {
     'Bishkek': '-4772065501',
-    'Osh': '-group_id2',
+    'Osh': '-4770989660',
 }
 
 
