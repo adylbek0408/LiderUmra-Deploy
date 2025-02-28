@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 def handle_accept(update, context):
     query = update.callback_query
     query.answer()
-    
+
     try:
         client_id = int(query.data.split('_')[1])
     except (IndexError, ValueError):
@@ -26,28 +26,39 @@ def handle_accept(update, context):
                 query.edit_message_text("⚠️ Заявка уже принята другим менеджером!")
                 return
 
-            if manager.branch != client.package.place:
-                query.edit_message_text("❌ Эта заявка не для вашего филиала!")
-                return
-
+            # Update the client status and assign the manager
             client.status = 'processing'
             client.manager = manager
             client.save(update_fields=['status', 'manager', 'updated_at'])
 
+            # Prepare the updated message text
             manager_name = manager.get_display_name()
             accept_text = (
-                f"✅ Принято менеджером: {manager_name}\n"  
+                f"✅ Принято менеджером: {manager_name}\n"
                 f"⏱ Время принятия: {client.updated_at.astimezone().strftime('%Y-%m-%d %H:%M')}"
             )
-            
-            query.edit_message_text(
-                text=f"{accept_text}\n\n{query.message.text}",
-                reply_markup=None
+            original_message_text = (
+                f"📣 Новая заявка ({client.package.place})❗️\n"
+                f"👤 Имя: {client.full_name}\n"
+                f"📞 Телефон: {client.phone}\n"
+                f"🌍 Место: {client.country}, {client.city}\n"
+                f"📦 Пакет: {client.package.name or 'Не указан'}"
             )
-            
+            new_text = f"{accept_text}\n\n{original_message_text}"
+
+            # Edit the group message to remove the button and show acceptance info
+            if client.notification_message_id:
+                context.bot.edit_message_text(
+                    chat_id=settings.TELEGRAM_GROUP_CHAT_ID,
+                    message_id=client.notification_message_id,
+                    text=new_text,
+                    reply_markup=None
+                )
+
+            # Notify the manager privately (optional)
             context.bot.send_message(
                 chat_id=manager.telegram_id,
-                text=f"{client.full_name}\n{client.phone}"
+                text=f"Вы приняли заявку:\n{client.full_name}\n{client.phone}"
             )
 
     except Client.DoesNotExist:
@@ -59,6 +70,7 @@ def handle_accept(update, context):
     except Exception as e:
         logger.exception("Critical error in handle_accept: %s", str(e))
         query.edit_message_text("❗ Ошибка, попробуйте позже")
+
 
 
 class Command(BaseCommand):
