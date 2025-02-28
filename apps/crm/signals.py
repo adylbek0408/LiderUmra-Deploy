@@ -1,4 +1,4 @@
-# crm/signals.py
+# apps/crm/signals.py
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.conf import settings
@@ -11,19 +11,26 @@ logger = logging.getLogger(__name__)
 
 @receiver(post_save, sender=Client)
 def notify_new_client(sender, instance, created, **kwargs):
+    logger.info(f"Signal triggered for Client {instance.id}. Created: {created}, Status: {instance.status}")
+    
     if created and instance.status == 'new':
+        logger.info("New client detected. Starting notification process...")
         try:
+            logger.info("Initializing Telegram bot")
             bot = Bot(token=settings.TELEGRAM_BOT_TOKEN)
             
             if not instance.package:
-                logger.warning("Client %d has no package", instance.id)
+                logger.error("Client %d has no package assigned", instance.id)
                 return
                 
             branch = instance.package.place
+            logger.info("Branch: %s", branch)
+            
             managers = Manager.objects.filter(branch=branch)
-
+            logger.info("Managers found: %d", managers.count())
+            
             if not managers.exists():
-                logger.error("No managers for branch: %s", branch)
+                logger.error("No managers in branch %s", branch)
                 return
 
             keyboard = [[
@@ -43,24 +50,18 @@ def notify_new_client(sender, instance, created, **kwargs):
 
             for manager in managers:
                 try:
-                    # Check chat first
-                    bot.get_chat(chat_id=manager.telegram_id)
-                    
-                    # Send message with 30s timeout
+                    logger.info("Notifying manager %s", manager.telegram_id)
                     bot.send_message(
                         chat_id=manager.telegram_id,
                         text=message,
                         reply_markup=InlineKeyboardMarkup(keyboard),
-                        read_timeout=30,
-                        write_timeout=30,
-                        connect_timeout=30
+                        timeout=30
                     )
+                    logger.info("Notification sent to %s", manager.telegram_id)
                 except telegram.error.Unauthorized:
                     logger.error("Manager %s blocked the bot", manager.telegram_id)
-                except telegram.error.TimedOut:
-                    logger.warning("Timeout sending to manager %s", manager.telegram_id)
                 except Exception as e:
-                    logger.error("Failed to notify manager %s: %s", manager.telegram_id, str(e))
+                    logger.error("Failed to notify %s: %s", manager.telegram_id, str(e))
 
         except Exception as e:
             logger.exception("Critical error in notification system: %s", str(e))
