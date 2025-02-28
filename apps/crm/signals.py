@@ -49,6 +49,7 @@ def notify_new_client(sender, instance, created, **kwargs):
             
             # Send notification to each manager in the branch
             for manager in managers:
+                logger.info(f"Attempting to notify manager {manager} (Telegram ID: {manager.telegram_id})")
                 try:
                     bot.send_message(
                         chat_id=manager.telegram_id,
@@ -57,7 +58,7 @@ def notify_new_client(sender, instance, created, **kwargs):
                     )
                     logger.info(f"Notification sent to manager {manager.telegram_id}")
                 except Exception as e:
-                    logger.error(f"Failed to notify manager {manager}: {e}")
+                    logger.exception(f"Failed to send message to {manager.telegram_id}")  # Log full traceback
             
         except Exception as e:
-            logger.error(f"Error sending notifications: {e}")
+            logger.exception("Critical error in notification system")  # Log full traceback
