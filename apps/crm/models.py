@@ -5,9 +5,10 @@ from apps.tour.models import Package
 
 
 class Manager(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, 
-                              related_name='manager_profile',
-                              verbose_name='Пользователь')
+    fio = models.CharField(  # Новое поле вместо User
+        max_length=255,
+        verbose_name='ФИО менеджера'
+    )
     telegram_id = models.CharField(max_length=100, 
                                  unique=True, 
                                  verbose_name='Telegram ID')
@@ -27,8 +28,7 @@ class Manager(models.Model):
         ordering = ['user__username']
 
     def get_display_name(self):
-        # Возвращаем username напрямую
-        return self.user.username if self.user else "Неизвестный менеджер"
+        return self.fio  
 
 
 class Client(models.Model):
