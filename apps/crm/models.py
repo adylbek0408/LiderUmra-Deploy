@@ -27,7 +27,11 @@ class Manager(models.Model):
         ordering = ['user__username']
 
     def get_display_name(self):
-        return self.user.get_full_name() or self.user.username or f"Manager {self.id}"
+        return (
+            self.user.get_full_name() 
+            or self.user.username 
+            or f"Менеджер {self.id}"
+        )
 
 
 class Client(models.Model):

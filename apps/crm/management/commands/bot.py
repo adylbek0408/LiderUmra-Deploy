@@ -35,12 +35,11 @@ def handle_accept(update, context):
             client.manager = manager
             client.save(update_fields=['status', 'manager', 'updated_at'])
 
-            # Use manager's full name or username as fallback
             manager_name = manager.get_display_name() 
             accept_text = (
-                f"✅ Принято менеджером: {manager_name}\n"
+                f"✅ Принято менеджером: {manager.get_display_name()}\n"  # Changed here
                 f"⏱ Время принятия: {client.updated_at.astimezone().strftime('%Y-%m-%d %H:%M')}"
-            )
+                )
             
             query.edit_message_text(
                 text=f"{accept_text}\n\n{query.message.text}",
