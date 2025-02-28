@@ -27,11 +27,16 @@ class Manager(models.Model):
         ordering = ['user__username']
 
     def get_display_name(self):
-        return (
-            self.user.get_full_name() 
-            or self.user.username 
-            or f"Менеджер {self.id}"
-        )
+    # Добавляем проверку на пустые строки с пробелами
+        full_name = self.user.get_full_name().strip()
+        username = self.user.username.strip()
+        if full_name:
+            return full_name
+        elif username:
+            return username
+        else:
+        # Используем Telegram ID как запасной вариант
+            return f"Менеджер (TG: {self.telegram_id})"
 
 
 class Client(models.Model):
