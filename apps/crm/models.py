@@ -57,7 +57,8 @@ class Client(models.Model):
         Package,
         on_delete=models.SET_NULL,
         related_name='clients',
-        verbose_name='Выбранный пакет'
+        verbose_name='Выбранный пакет',
+        null=True
     )
     manager = models.ForeignKey(Manager,
                               on_delete=models.SET_NULL,
