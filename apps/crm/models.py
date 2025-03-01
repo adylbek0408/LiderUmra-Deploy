@@ -35,6 +35,11 @@ class Manager(models.Model):
 
     def get_display_name(self):
         return self.user.get_full_name() if self.user else 'Не указан'
+        
+    def __str__(self):
+        if self.user:
+            return f"{self.user.get_full_name()} ({self.branch})"
+        return f"Менеджер ID:{self.id} ({self.branch})"
 
 
 class Client(models.Model):
@@ -79,6 +84,8 @@ class Client(models.Model):
                                     verbose_name='Дата обновления')
 
     class Meta:
+        verbose_name = 'Клиент'
+        verbose_name_plural = 'Клиенты'
         indexes = [
             models.Index(fields=['status', 'created_at']),
             models.Index(fields=['manager', 'status']),
