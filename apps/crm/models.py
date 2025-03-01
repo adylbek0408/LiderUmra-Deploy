@@ -1,11 +1,10 @@
 from django.db import models
-from django.contrib.auth.models import User
 from phonenumber_field.modelfields import PhoneNumberField
 from apps.tour.models import Package
 
 
 class Manager(models.Model):
-    fio = models.CharField(  # Новое поле вместо User
+    fio = models.CharField( 
         max_length=155,
         verbose_name='ФИО менеджера'
     )

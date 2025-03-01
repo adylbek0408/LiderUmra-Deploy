@@ -154,8 +154,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
 
 TELEGRAM_GROUP_IDS = {
-    'Bishkek': os.environ.get('TELEGRAM_GROUP_BISHKEK'),
-    'Osh': os.environ.get('TELEGRAM_GROUP_OSH'),
+    'Bishkek': os.getenv('TELEGRAM_GROUP_BISHKEK'),
+    'Osh': os.getenv('TELEGRAM_GROUP_OSH'),
 }
 
 
