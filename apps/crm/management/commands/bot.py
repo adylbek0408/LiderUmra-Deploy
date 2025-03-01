@@ -3,26 +3,26 @@ from django.core.management.base import BaseCommand
 from telegram.ext import Updater, CallbackQueryHandler
 from django.conf import settings
 from django.db import transaction
+from django.utils import timezone
 from ...models import Client, Manager
-from django.utils.timezone import localtime
 
 logger = logging.getLogger(__name__)
 
 def build_notification_text(client, manager):
-    """Формирование текста уведомления после принятия заявки"""
-    accept_time = client.updated_at.strftime("%Y-%m-%d %H:%M")
-    place = f"{client.country}, {client.city}"
-    package_place = client.package.get_place_display()
-    
-    return (
+    accept_text = (
         f"✅ Принято менеджером: {manager.fio}\n"
-        f"⏱ Время принятия: {accept_time}\n\n"
-        f"📣 Новая заявка ({package_place})❗️\n"
+        f"⏱ Время принятия: {client.updated_at.astimezone().strftime('%Y-%m-%d %H:%M')}\n\n"
+    )
+    
+    original_message = (
+        f"📣 Новая заявка ({client.package.place})❗️\n"
         f"👤 Имя: {client.full_name}\n"
         f"📞 Телефон: {client.phone}\n"
-        f"🌍 Место: {place}\n"
-        f"📦 Пакет: {client.package.name}"
+        f"🌍 Место: {client.country}, {client.city}\n"
+        f"📦 Пакет: {client.package.name or 'Не указан'}"
     )
+    
+    return f"{accept_text}{original_message}"
 
 def handle_accept(update, context):
     query = update.callback_query
@@ -55,6 +55,12 @@ def handle_accept(update, context):
                 reply_markup=None
             )
 
+            # Дополнительное уведомление менеджеру
+            context.bot.send_message(
+                chat_id=manager.telegram_id,
+                text=f"Вы приняли заявку:\n{client.full_name}\n{client.phone}"
+            )
+
     except Client.DoesNotExist:
         logger.error(f"Client not found: {client_id}")
         query.edit_message_text("❌ Заявка не найдена!")
@@ -65,9 +71,8 @@ def handle_accept(update, context):
         logger.error(f"Group not found for branch: {e}")
         query.edit_message_text("❌ Ошибка группы филиала")
     except Exception as e:
-        # Логируем полную информацию об ошибке
         logger.exception(f"Critical error: {str(e)}")
-        query.edit_message_text("❗ Ошибка, попробуйте позже. Администратор уже уведомлен.")
+        query.edit_message_text("❗ Ошибка, попробуйте позже")
 
 
 class Command(BaseCommand):
@@ -83,4 +88,4 @@ class Command(BaseCommand):
 
     def error_handler(self, update, context):
         logger.error('Update "%s" caused error: %s', update, context.error)
-
+        
