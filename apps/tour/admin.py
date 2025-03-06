@@ -74,7 +74,7 @@ class PackageAdmin(admin.ModelAdmin):
 class HotelImageInline(admin.StackedInline):
     model = HotelImage
     extra = 1
-    fields = ['image', 'hotel']
+    fields = ['image', 'video_url', 'hotel']
     
     def image_preview(self, obj):
         if obj.image:
@@ -86,7 +86,7 @@ class HotelImageInline(admin.StackedInline):
 
 @admin.register(Hotel)
 class HotelAdmin(admin.ModelAdmin):
-    list_display = ('name', 'city', 'stars', 'distance_to_mosque')
+    list_display = ('name', 'city', 'stars', 'distance_to_mosque', 'latitude', 'longitude') 
     search_fields = ('name', 'city')
     list_filter = ('city', 'stars')
     inlines = [HotelImageInline]
@@ -99,6 +99,10 @@ class HotelAdmin(admin.ModelAdmin):
         ('Русский', {
             'fields': ('name_ru', 'distance_to_mosque_ru', 'accommodation_ru', 'meals_ru')
         }),
+        ('Координаты', { 
+            'fields': ('latitude', 'longitude'),
+            'description': 'Укажите широту и долготу для отображения на карте.'
+        }),
     )
 
 
@@ -110,16 +114,13 @@ class PackageDetailImageInline(admin.StackedInline):
 
 @admin.register(PackageDetail)
 class PackageDetailAdmin(admin.ModelAdmin):
-    list_display = ('name', 'category', 'detail_type')
-    search_fields = ('name', 'detail_type')
+    list_display = ('category',)  # Fixed: Added comma to make it a tuple
+    search_fields = ('detail_type',)  # Updated to match new model
     list_filter = ('category', 'detail_type')
     inlines = [PackageDetailImageInline]
 
     fieldsets = (
-        ('Кыргызча', {
-            'fields': ('category', 'detail_type', 'name_ky', 'rich_ky')
-        }),
-        ('Русский', {
-            'fields': ('name_ru', 'rich_ru')
+        ('Основная информация', {
+            'fields': ('category', 'detail_type')
         }),
     )

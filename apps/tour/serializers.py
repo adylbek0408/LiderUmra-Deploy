@@ -25,6 +25,24 @@ class TourDateSerializer(serializers.ModelSerializer):
         return (obj.end_tour - obj.start_tour).days
 
 
+class PackageDetailImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PackageDetailImage
+        fields = ['id', 'image', 'video_url']
+
+
+class PackageDetailSerializer(serializers.ModelSerializer):
+    category = CategoryPackageSerializer()
+    detail_type_display = serializers.CharField(source='get_detail_type_display', read_only=True)
+    package_detail_images = PackageDetailImageSerializer(many=True, read_only=True)
+
+
+    class Meta:
+        model = PackageDetail
+        fields = ['id', 'category', 'name', 'rich', 'detail_type', 'detail_type_display',
+         'package_detail_images']
+
+
 class PackageSerializer(serializers.ModelSerializer):
     category = CategoryPackageSerializer()
     ajy = AjySerializer()
@@ -43,7 +61,7 @@ class PackageSerializer(serializers.ModelSerializer):
 class HotelImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = HotelImage
-        fields = ['id', 'image', 'hotel']
+        fields = ['id', 'image', 'video_url', 'hotel']
 
 
 class HotelSerializer(serializers.ModelSerializer):
@@ -57,24 +75,9 @@ class HotelSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'category', 'name', 'city', 'city_display',
             'stars', 'stars_display', 'distance_to_mosque',
-            'accommodation', 'meals', 'nights', 'hotel_images'
+            'accommodation', 'meals', 'nights', 'hotel_images',
+            'latitude', 'longitude'
         ]
 
 
-class PackageDetailImageSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = PackageDetailImage
-        fields = ['id', 'image', 'video_url']
-
-
-class PackageDetailSerializer(serializers.ModelSerializer):
-    category = CategoryPackageSerializer()
-    detail_type_display = serializers.CharField(source='get_detail_type_display', read_only=True)
-    package_detail_images = PackageDetailImageSerializer(many=True, read_only=True)
-
-
-    class Meta:
-        model = PackageDetail
-        fields = ['id', 'category', 'name', 'rich', 'detail_type', 'detail_type_display',
-         'package_detail_images']
 

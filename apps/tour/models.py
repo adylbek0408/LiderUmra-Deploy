@@ -49,6 +49,34 @@ class TourDate(models.Model):
         verbose_name_plural = 'Туры даты'
 
 
+
+class PackageDetail(BaseModel):
+    category = models.ForeignKey(CategoryPackage, on_delete=models.PROTECT, related_name='package_details', verbose_name='Категория')
+
+    FOOD_INFO = 'FoodInfo'
+    REQUIREMENTS = 'Requirements'
+    RESTRICTIONS = 'Restrictions'
+    PLACES_TO_VISIT = 'PlacesToVisit'
+    YOU_GET = 'YouGet'
+    
+    DETAIL_TYPES = [
+        (FOOD_INFO, 'Информация о питании'),
+        (REQUIREMENTS, 'Рекомендуется'),
+        (RESTRICTIONS, 'Не рекомендуется'),
+        (PLACES_TO_VISIT, 'Места для посещения'),
+        (YOU_GET, 'Что вы получите от нас'),
+    ]
+    detail_type = models.CharField(max_length=100, choices=DETAIL_TYPES, verbose_name='Тип информации:')
+
+    class Meta:
+        verbose_name = 'Детали пакета'
+        verbose_name_plural = 'Детали пакетов'
+        ordering = ['detail_type']
+
+    def __str__(self):
+        return f"{self.category.name} - {dict(self.DETAIL_TYPES).get(self.detail_type, self.detail_type)}"
+
+
 class Package(models.Model):
     BISHKEK = 'Bishkek'
     OSH = 'Osh'
@@ -81,33 +109,6 @@ class Package(models.Model):
 
     def __str__(self):
         return f"{self.name} | {self.category} | ({self.tour_date})"
-
-
-class PackageDetail(BaseModel):
-    category = models.ForeignKey(CategoryPackage, on_delete=models.PROTECT, related_name='package_details', verbose_name='Категория')
-
-    FOOD_INFO = 'FoodInfo'
-    REQUIREMENTS = 'Requirements'
-    RESTRICTIONS = 'Restrictions'
-    PLACES_TO_VISIT = 'PlacesToVisit'
-    YOU_GET = 'YouGet'
-    
-    DETAIL_TYPES = [
-        (FOOD_INFO, 'Информация о питании'),
-        (REQUIREMENTS, 'Рекомендуется'),
-        (RESTRICTIONS, 'Не рекомендуется'),
-        (PLACES_TO_VISIT, 'Места для посещения'),
-        (YOU_GET, 'Что вы получите от нас'),
-    ]
-    detail_type = models.CharField(max_length=100, choices=DETAIL_TYPES, verbose_name='Тип информации:')
-
-    class Meta:
-        verbose_name = 'Детали пакета'
-        verbose_name_plural = 'Детали пакетов'
-        ordering = ['detail_type']
-
-    def __str__(self):
-        return dict(self.DETAIL_TYPES).get(self.detail_type, self.detail_type)
 
 
 class PackageDetailImage(BaseModel):
@@ -152,6 +153,33 @@ class Hotel(models.Model):
         blank=True,
         help_text='Необязательное поле'
     )
+    latitude = models.DecimalField(
+        max_digits=9,
+        decimal_places=6,
+        null=True,
+        blank=True,
+        verbose_name='Широта',
+        help_text='Пример: 21.422487 (Мекка)'
+    )
+    longitude = models.DecimalField(
+        max_digits=9,
+        decimal_places=6,
+        null=True,
+        blank=True,
+        verbose_name='Долгота',
+        help_text='Пример: 39.826206 (Мекка)'
+    )
+
+    def clean(self):
+        # ... существующая проверка stars ...
+        
+        if self.latitude:
+            if not (-90 <= float(self.latitude) <= 90):
+                raise ValidationError("Широта должна быть между -90 и 90 градусами")
+                
+        if self.longitude:
+            if not (-180 <= float(self.longitude) <= 180):
+                raise ValidationError("Долгота должна быть между -180 и 180 градусами")
 
     def clean(self):
         if self.stars < 1 or self.stars > 5:
@@ -170,6 +198,7 @@ class Hotel(models.Model):
 class HotelImage(models.Model):
     hotel = models.ForeignKey(Hotel, on_delete=models.CASCADE, related_name='hotel_images', verbose_name='Отель')
     image = models.ImageField(upload_to='hotels/images/', verbose_name='Изображение')
+    video_url = models.URLField(verbose_name='Ссылка на видео', blank=True, null=True)
 
     def __str__(self):
             return f"{self.hotel.name} - {self.image.name}"
