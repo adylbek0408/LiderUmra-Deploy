@@ -86,7 +86,7 @@ class HotelImageInline(admin.StackedInline):
 
 @admin.register(Hotel)
 class HotelAdmin(admin.ModelAdmin):
-    list_display = ('name', 'city', 'stars', 'distance_to_mosque', 'latitude', 'longitude') 
+    list_display = ('name', 'city', 'stars', 'distance_to_mosque',) 
     search_fields = ('name', 'city')
     list_filter = ('city', 'stars')
     inlines = [HotelImageInline]
@@ -94,14 +94,10 @@ class HotelAdmin(admin.ModelAdmin):
     fieldsets = (
         ('Кыргызча', {
             'fields': ('category', 'name_ky', 'city', 'stars', 'distance_to_mosque_ky',
-            'accommodation_ky', 'meals_ky', 'nights')
+            'accommodation_ky', 'meals_ky', 'nights', 'addres_url')
         }),
         ('Русский', {
             'fields': ('name_ru', 'distance_to_mosque_ru', 'accommodation_ru', 'meals_ru')
-        }),
-        ('Координаты', { 
-            'fields': ('latitude', 'longitude'),
-            'description': 'Укажите широту и долготу для отображения на карте.'
         }),
     )
 

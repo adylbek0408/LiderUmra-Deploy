@@ -76,7 +76,7 @@ class HotelSerializer(serializers.ModelSerializer):
             'id', 'category', 'name', 'city', 'city_display',
             'stars', 'stars_display', 'distance_to_mosque',
             'accommodation', 'meals', 'nights', 'hotel_images',
-            'latitude', 'longitude'
+            'addres_url'
         ]
 
 

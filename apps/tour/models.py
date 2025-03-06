@@ -153,33 +153,7 @@ class Hotel(models.Model):
         blank=True,
         help_text='Необязательное поле'
     )
-    latitude = models.DecimalField(
-        max_digits=9,
-        decimal_places=6,
-        null=True,
-        blank=True,
-        verbose_name='Широта',
-        help_text='Пример: 21.422487 (Мекка)'
-    )
-    longitude = models.DecimalField(
-        max_digits=9,
-        decimal_places=6,
-        null=True,
-        blank=True,
-        verbose_name='Долгота',
-        help_text='Пример: 39.826206 (Мекка)'
-    )
-
-    def clean(self):
-        # ... существующая проверка stars ...
-        
-        if self.latitude:
-            if not (-90 <= float(self.latitude) <= 90):
-                raise ValidationError("Широта должна быть между -90 и 90 градусами")
-                
-        if self.longitude:
-            if not (-180 <= float(self.longitude) <= 180):
-                raise ValidationError("Долгота должна быть между -180 и 180 градусами")
+    addres_url = models.URLField(verbose_name='Ссылка на карту', blank=True, null=True)
 
     def clean(self):
         if self.stars < 1 or self.stars > 5:
