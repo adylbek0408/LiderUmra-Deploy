@@ -224,10 +224,12 @@ CSRF_TRUSTED_ORIGINS = [
 ]
 
 CORS_ALLOW_ALL_ORIGINS = False  # Запрещаем все, кроме указанных ниже
+
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
-    "https://your-frontend-domain.com",
+    "https://liderumra.kg",
+    "https://www.liderumra.kg"
 ]
 
 CORS_ALLOW_METHODS = [
