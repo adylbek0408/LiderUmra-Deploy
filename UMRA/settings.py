@@ -46,6 +46,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -216,6 +217,11 @@ JAZZMIN_UI_TWEAKS = {
     "actions_sticky_top": True,
 }
 
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://www.liderumra.kg",
+    "https://liderumra.kg",
+]
 
 CORS_ALLOW_ALL_ORIGINS = False  # Запрещаем все, кроме указанных ниже
 CORS_ALLOWED_ORIGINS = [
