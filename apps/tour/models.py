@@ -49,9 +49,9 @@ class TourDate(models.Model):
         verbose_name_plural = 'Туры даты'
 
 
-
 class PackageDetail(BaseModel):
-    category = models.ForeignKey(CategoryPackage, on_delete=models.PROTECT, related_name='package_details', verbose_name='Категория')
+    category = models.ForeignKey(CategoryPackage, on_delete=models.PROTECT, related_name='package_details',
+                                 verbose_name='Категория')
 
     FOOD_INFO = 'FoodInfo'
     REQUIREMENTS = 'Requirements'
@@ -87,9 +87,11 @@ class Package(models.Model):
     ]
     place = models.CharField(max_length=100, choices=PLACE, verbose_name='Филиал:')
 
-    category = models.ForeignKey(CategoryPackage, on_delete=models.PROTECT, related_name='packages', verbose_name='Категория')
+    category = models.ForeignKey(CategoryPackage, on_delete=models.PROTECT, related_name='packages',
+                                 verbose_name='Категория')
     ajy = models.ForeignKey(Ajy, on_delete=models.PROTECT, related_name='packages', verbose_name='Ажы башчы')
-    tour_date = models.ForeignKey(TourDate, on_delete=models.PROTECT, related_name='packages', verbose_name='Дата тура')
+    tour_date = models.ForeignKey(TourDate, on_delete=models.PROTECT, related_name='packages',
+                                  verbose_name='Дата тура')
     name = models.CharField(max_length=155, verbose_name='Название:')
     image = models.ImageField(upload_to='packages/images/', verbose_name='Изображение')
     description = models.TextField(verbose_name='Описание:', null=True, blank=True)
@@ -112,15 +114,17 @@ class Package(models.Model):
 
 
 class PackageDetailImage(BaseModel):
-    package_detail = models.ForeignKey(PackageDetail, on_delete=models.CASCADE, related_name='package_detail_images', verbose_name='Детали пакета')
-    
+    package_detail = models.ForeignKey(PackageDetail, on_delete=models.CASCADE, related_name='package_detail_images',
+                                       verbose_name='Детали пакета')
+
     class Meta:
         verbose_name = 'Изображение детали пакета'
         verbose_name_plural = 'Изображения деталей пакетов'
 
 
 class Hotel(models.Model):
-    category = models.ForeignKey(CategoryPackage, on_delete=models.PROTECT, related_name='package_hotels', verbose_name='Категория')
+    category = models.ForeignKey(CategoryPackage, on_delete=models.PROTECT, related_name='package_hotels',
+                                 verbose_name='Категория')
 
     CITY_CHOICES = [
         ('mecca', 'Мекка'),
@@ -138,7 +142,8 @@ class Hotel(models.Model):
     name = models.CharField(max_length=100, verbose_name='Название:')
     city = models.CharField(max_length=10, choices=CITY_CHOICES, verbose_name='Город:')
     stars = models.IntegerField(choices=STAR_CHOICES, default=0, verbose_name='Звёздность отеля')
-    distance_to_mosque = models.CharField(max_length=100, verbose_name='Расстояние до мечети:', help_text='Например: 300 м')
+    distance_to_mosque = models.CharField(max_length=100, verbose_name='Расстояние до мечети:',
+                                          help_text='Например: 300 м')
     accommodation = models.CharField(max_length=100, verbose_name='Размещение:', help_text='Например: Четырехместное')
     meals = models.CharField(
         max_length=200,
@@ -168,16 +173,17 @@ class Hotel(models.Model):
         indexes = [
             models.Index(fields=['city', 'stars']),
         ]
-    
+
+
 class HotelImage(models.Model):
     hotel = models.ForeignKey(Hotel, on_delete=models.CASCADE, related_name='hotel_images', verbose_name='Отель')
     image = models.ImageField(upload_to='hotels/images/', verbose_name='Изображение')
     video_url = models.URLField(verbose_name='Ссылка на видео', blank=True, null=True)
 
     def __str__(self):
-            return f"{self.hotel.name} - {self.image.name}"
+        return f"{self.hotel.name} - {self.image.name}"
 
     class Meta:
-            verbose_name = 'Изображение отеля'
-            verbose_name_plural = 'Изображения отелей'
+        verbose_name = 'Изображение отеля'
+        verbose_name_plural = 'Изображения отелей'
 

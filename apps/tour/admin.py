@@ -9,7 +9,6 @@ from .models import (
     HotelImage, 
     PackageDetailImage,
 )
-from modeltranslation.admin import TranslationAdmin
 
 
 @admin.register(Ajy)
@@ -62,8 +61,8 @@ class PackageAdmin(admin.ModelAdmin):
 
     fieldsets = (
         ('Кыргызча', {
-            'fields': ('place', 'category', 'ajy', 'tour_date', 'name_ky', 'image', 'description_ky',
-            'available_seats', 'is_active')
+            'fields': ('place', 'category', 'ajy', 'tour_date', 'name_ky', 'image', 'description_ky', 'available_seats',
+                       'is_active')
         }),
         ('Русский', {
             'fields': ('name_ru', 'description_ru')
@@ -75,13 +74,6 @@ class HotelImageInline(admin.StackedInline):
     model = HotelImage
     extra = 1
     fields = ['image', 'video_url', 'hotel']
-    
-    def image_preview(self, obj):
-        if obj.image:
-            return format_html('<img src="{}" width="150" height="150" />', obj.image.url)
-        return '-'
-    image_preview.short_description = 'Предпросмотр'
-
 
 
 @admin.register(Hotel)
@@ -93,8 +85,8 @@ class HotelAdmin(admin.ModelAdmin):
     
     fieldsets = (
         ('Кыргызча', {
-            'fields': ('category', 'name_ky', 'city', 'stars', 'distance_to_mosque_ky',
-            'accommodation_ky', 'meals_ky', 'nights', 'addres_url')
+            'fields': ('category', 'name_ky', 'city', 'stars', 'distance_to_mosque_ky', 'accommodation_ky',
+                       'meals_ky', 'nights', 'addres_url')
         }),
         ('Русский', {
             'fields': ('name_ru', 'distance_to_mosque_ru', 'accommodation_ru', 'meals_ru')
@@ -110,13 +102,17 @@ class PackageDetailImageInline(admin.StackedInline):
 
 @admin.register(PackageDetail)
 class PackageDetailAdmin(admin.ModelAdmin):
-    list_display = ('category',)  # Fixed: Added comma to make it a tuple
-    search_fields = ('detail_type',)  # Updated to match new model
+    list_display = ('name', 'category', 'detail_type')
+    search_fields = ('name', 'detail_type')
     list_filter = ('category', 'detail_type')
     inlines = [PackageDetailImageInline]
 
     fieldsets = (
-        ('Основная информация', {
-            'fields': ('category', 'detail_type')
+        ('Кыргызча', {
+            'fields': ('category', 'detail_type', 'name_ky', 'rich_ky')
+        }),
+        ('Русский', {
+            'fields': ('name_ru', 'rich_ru')
         }),
     )
+

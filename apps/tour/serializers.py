@@ -36,11 +36,9 @@ class PackageDetailSerializer(serializers.ModelSerializer):
     detail_type_display = serializers.CharField(source='get_detail_type_display', read_only=True)
     package_detail_images = PackageDetailImageSerializer(many=True, read_only=True)
 
-
     class Meta:
         model = PackageDetail
-        fields = ['id', 'category', 'name', 'rich', 'detail_type', 'detail_type_display',
-         'package_detail_images']
+        fields = ['id', 'category', 'name', 'rich', 'detail_type', 'detail_type_display', 'package_detail_images']
 
 
 class PackageSerializer(serializers.ModelSerializer):
