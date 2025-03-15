@@ -11,6 +11,8 @@ from .serializers import (
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.exceptions import NotFound
+from rest_framework.decorators import action
+from UMRA.utils import with_language
 
 
 class AjyViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
@@ -19,12 +21,32 @@ class AjyViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.Gene
     filter_backends = [DjangoFilterBackend]
     search_fields = ['name']
 
+    @action(detail=False, methods=['get'])
+    def language_info(self, request):
+        from django.utils import translation
+        current_lang = translation.get_language()
+        return Response({
+            "current_language": current_lang,
+            "message": "Используется язык из заголовка Accept-Language"
+        })
+
 
 class CategoryPackageViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     queryset = CategoryPackage.objects.all()
     serializer_class = CategoryPackageSerializer
     filter_backends = [DjangoFilterBackend]
     search_fields = ['name']
+    @action(detail=False, methods=['get'])
+    def language_info(self, request):
+        """
+        Возвращает информацию о текущем языке из заголовка Accept-Language
+        """
+        from django.utils import translation
+        current_lang = translation.get_language()
+        return Response({
+            "current_language": current_lang,
+            "message": "Используется язык из заголовка Accept-Language"
+        })
 
 
 class TourDateViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
@@ -32,6 +54,17 @@ class TourDateViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets
     serializer_class = TourDateSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['start_tour', 'end_tour']
+    @action(detail=False, methods=['get'])
+    def language_info(self, request):
+        """
+        Возвращает информацию о текущем языке из заголовка Accept-Language
+        """
+        from django.utils import translation
+        current_lang = translation.get_language()
+        return Response({
+            "current_language": current_lang,
+            "message": "Используется язык из заголовка Accept-Language"
+        })
 
 
 class PackageFilter(filters.FilterSet):
@@ -56,6 +89,15 @@ class PackageViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.
             is_active=True
         ).order_by('tour_date__start_tour')
 
+    @action(detail=False, methods=['get'])
+    def language_info(self, request):
+        from django.utils import translation
+        current_lang = translation.get_language()
+        return Response({
+            "current_language": current_lang,
+            "message": "Используется язык из заголовка Accept-Language"
+        })
+
 
 class PackageDetailViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     queryset = PackageDetail.objects.select_related('category').prefetch_related('package_detail_images').only(
@@ -77,9 +119,19 @@ class PackageDetailViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, vie
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    @action(detail=False, methods=['get'])
+    def language_info(self, request):
+        from django.utils import translation
+        current_lang = translation.get_language()
+        return Response({
+            "current_language": current_lang,
+            "message": "Используется язык из заголовка Accept-Language"
+        })
+
 
 class PackageDetailImageViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
-    queryset = PackageDetailImage.objects.select_related('package_detail').only('id', 'package_detail', 'image', 'video_url')
+    queryset = PackageDetailImage.objects.select_related('package_detail').only('id', 'package_detail', 'image',
+                                                                                'video_url')
     serializer_class = PackageDetailImageSerializer
 
 
@@ -97,3 +149,12 @@ class HotelViewSet(mixins.ListModelMixin,
         ).prefetch_related(
             'hotel_images'
         ).all()
+
+    @action(detail=False, methods=['get'])
+    def language_info(self, request):
+        from django.utils import translation
+        current_lang = translation.get_language()
+        return Response({
+            "current_language": current_lang,
+            "message": "Используется язык из заголовка Accept-Language"
+        })
