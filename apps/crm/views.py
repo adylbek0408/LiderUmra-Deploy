@@ -12,10 +12,7 @@ class ManagerViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 @method_decorator(csrf_exempt, name='dispatch')
-class ClientViewSet(mixins.CreateModelMixin,
-                    mixins.ListModelMixin,
-                    mixins.RetrieveModelMixin,
-                    viewsets.GenericViewSet):
+class ClientViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     queryset = Client.objects.select_related('manager', 'package')
     serializer_class = ClientSerializer
     filterset_fields = ['status', 'country']
@@ -27,4 +24,4 @@ class ClientViewSet(mixins.CreateModelMixin,
         return [permissions.IsAdminUser()]
 
     def get_serializer_class(self):
-        return ClientCreateSerializer if self.action == 'create' else ClientSerializer
+        return ClientCreateSerializer if self.action == 'create' else super().get_serializer_class()
