@@ -1,12 +1,16 @@
 from rest_framework import mixins, viewsets, permissions
 from .models import Manager, Client
 from .serializers import ManagerSerializer, ClientSerializer, ClientCreateSerializer
+from django.views.decorators.csrf import csrf_exempt
+
 
 class ManagerViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Manager.objects.all()
     serializer_class = ManagerSerializer
     permission_classes = [permissions.IsAdminUser]
 
+
+@csrf_exempt
 class ClientViewSet(mixins.CreateModelMixin,
                    mixins.ListModelMixin,
                    mixins.RetrieveModelMixin,

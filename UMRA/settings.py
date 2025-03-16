@@ -13,9 +13,9 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env.bool('DEBUG', default=False)
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["liderumra.kg", "www.liderumra.kg"])
 # ALLOWED_HOSTS = []
 
 
@@ -222,6 +222,8 @@ JAZZMIN_UI_TWEAKS = {
 CSRF_TRUSTED_ORIGINS = [
     "https://www.liderumra.kg",
     "https://liderumra.kg",
+    "http://localhost:3000",
+    "http://127.0.0.1:3000"
 ]
 
 CORS_ALLOW_ALL_ORIGINS = False  # Запрещаем все, кроме указанных ниже
