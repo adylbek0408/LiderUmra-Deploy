@@ -41,20 +41,19 @@ INSTALLED_APPS = [
     'apps.blog',
 ]
 
-
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',  # именно здесь!
     'django.middleware.locale.LocaleMiddleware',
     'UMRA.middleware.LanguageHeaderMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',  # только одна запись
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
 
 ROOT_URLCONF = 'UMRA.urls'
 
@@ -222,8 +221,6 @@ JAZZMIN_UI_TWEAKS = {
 CSRF_TRUSTED_ORIGINS = [
     "https://www.liderumra.kg",
     "https://liderumra.kg",
-    "http://localhost:3000",
-    "http://127.0.0.1:3000"
 ]
 
 CORS_ALLOW_ALL_ORIGINS = False  # Запрещаем все, кроме указанных ниже
