@@ -35,6 +35,6 @@ urlpatterns = [
     ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 urlpatterns += i18n_patterns(
-    path('admin/', admin.site.urls),
+    path('administration-lider-umra/', admin.site.urls),
     prefix_default_language=False,
 )
