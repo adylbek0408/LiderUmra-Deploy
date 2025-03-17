@@ -21,9 +21,12 @@ class ClientAdmin(admin.ModelAdmin):
 
 @admin.register(Manager)
 class ManagerAdmin(admin.ModelAdmin):
-    list_display = ('user', 'branch', 'formatted_phone')
+    list_display = ('full_name', 'telegram_id', 'branch', 'phone')
+    search_fields = ('full_name', 'telegram_id', 'phone')
+    list_filter = ('branch',)
 
-    def formatted_phone(self, obj):
-        return obj.phone.format_as("international")
-
-    formatted_phone.short_description = _('Телефон')
+    fieldsets = (
+        ('Основная информация', {
+            'fields': ('telegram_id', 'full_name', 'phone', 'branch')
+        }),
+    )

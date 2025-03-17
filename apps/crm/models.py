@@ -5,12 +5,9 @@ from django.contrib.auth.models import User
 
 
 class Manager(models.Model):
-    user = models.OneToOneField(
-        User,
-        on_delete=models.CASCADE,
-        verbose_name='Пользователь',
-        null=True,     
-        blank=True
+    full_name = models.CharField(
+        max_length=255,
+        verbose_name='Полное имя'
     )
     telegram_id = models.CharField(
         max_length=100,

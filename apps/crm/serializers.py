@@ -5,7 +5,8 @@ from .models import Manager, Client
 class ManagerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Manager
-        fields = ['id', 'user', 'telegram_id', 'phone']
+        fields = ['id', 'telegram_id', 'full_name', 'phone', 'branch']
+        read_only_fields = ['id', 'telegram_id']
 
 
 class ClientSerializer(serializers.ModelSerializer):

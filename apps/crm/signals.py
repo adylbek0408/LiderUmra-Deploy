@@ -7,6 +7,7 @@ from .models import Client
 
 logger = logging.getLogger(__name__)
 
+
 @receiver(post_save, sender=Client)
 def notify_new_client(sender, instance, created, **kwargs):
     if created and instance.status == 'new':
