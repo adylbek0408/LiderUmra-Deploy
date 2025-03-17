@@ -188,14 +188,33 @@ JAZZMIN_SETTINGS = {
         }],
     },
     "icons": {
+        # Auth
         "auth": "fas fa-users-cog",
         "auth.user": "fas fa-user",
         "auth.Group": "fas fa-users",
+
+        # CRM
         "crm.Client": "fas fa-user-tag",
         "crm.Manager": "fas fa-user-tie",
-        "tour.Package": "fas fa-box-open",
-        "tour.Hotel": "fas fa-hotel",
-        "blog.Post": "fas fa-newspaper",
+
+        # Blog
+        "blog": "fas fa-blog",  # Иконка для всего приложения "blog"
+        "blog.Post": "fas fa-blog",  # Блоги (иконка блога)
+        "blog.Blog": "fas fa-newspaper",  # Блоги
+        "blog.Lesson": "fas fa-video",  # Уроки (видеоуроки)
+        "blog.Gallery": "fas fa-camera-retro",  # Фотогалерея (камера)
+        "blog.Photo": "fas fa-images",  # Фотогалерея (раньше было "Gallery", но модели такой нет)
+        "blog.FAQ": "fas fa-question-circle",  # Часто задаваемые вопросы
+
+        # Tour
+        "tour": "fas fa-route",  # Общая иконка для приложения "tour"
+        "tour.Ajy": "fas fa-user-friends",  # Ажы (группа людей / лидер)
+        "tour.PackageDetail": "fas fa-box",  # Детали пакетов
+        "tour.PackageCategory": "fas fa-layer-group",  # Категории пакетов (группировка)
+        "tour.CategoryPackage": "fas fa-tags",  # Категория пакетов (исправлено)
+        "tour.Hotel": "fas fa-hotel",  # Отели
+        "tour.Package": "fas fa-box-open",  # Пакеты
+        "tour.TourDate": "fas fa-calendar-alt",  # Туры даты (время/дата)
     },
     "default_icon_parents": "fas fa-chevron-circle-right",
     "default_icon_children": "fas fa-circle",
