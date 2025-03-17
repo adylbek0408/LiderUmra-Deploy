@@ -31,11 +31,11 @@ class Manager(models.Model):
         verbose_name_plural = 'Менеджеры'
 
     def get_display_name(self):
-        return self.user.get_full_name() if self.user else 'Не указан'
-        
+        return self.full_name if self.full_name else 'Не указан'
+
     def __str__(self):
-        if self.user:
-            return f"{self.user.get_full_name()} ({self.branch})"
+        if self.full_name:
+            return f"{self.full_name} ({self.branch})"
         return f"Менеджер ID:{self.id} ({self.branch})"
 
 
