@@ -1,24 +1,18 @@
 from django.utils import translation
+from django.utils.deprecation import MiddlewareMixin
 
 
-class LanguageHeaderMiddleware:
-
-    def __init__(self, get_response):
-        self.get_response = get_response
-
-    def __call__(self, request):
+class LanguageHeaderMiddleware(MiddlewareMixin):
+    def process_request(self, request):
         lang = request.headers.get('Accept-Language', 'ky')
-
         if lang not in ['ky', 'ru']:
             lang = 'ky'
-
         translation.activate(lang)
         request.LANGUAGE_CODE = lang
-
         setattr(request, '_language', lang)
+        return None
 
-        response = self.get_response(request)
-
+    def process_response(self, request, response):
+        lang = getattr(request, '_language', 'ky')
         response['Content-Language'] = lang
-
         return response

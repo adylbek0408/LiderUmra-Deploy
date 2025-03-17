@@ -8,16 +8,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 env = environ.Env()
 environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
-
 SECRET_KEY = os.getenv('SECRET_KEY')
 
-
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool('DEBUG', default=False)
 
-ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["liderumra.kg", "www.liderumra.kg"])
-# ALLOWED_HOSTS = []
+ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["127.0.0.1", "localhost", "liderumra.kg", "www.liderumra.kg"])
 
+# ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["liderumra.kg", "www.liderumra.kg"])
 
 INSTALLED_APPS = [
     'modeltranslation',
@@ -28,6 +25,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',  # Добавлено для поддержки sites
 
     'rest_framework',
     'ckeditor',
@@ -41,19 +39,20 @@ INSTALLED_APPS = [
     'apps.blog',
 ]
 
+SITE_ID = 1  # Добавлено для корректной работы
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'corsheaders.middleware.CorsMiddleware',  # именно здесь!
-    'django.middleware.locale.LocaleMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'UMRA.middleware.LanguageHeaderMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',  # только одна запись
+    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-
 
 ROOT_URLCONF = 'UMRA.urls'
 
@@ -75,10 +74,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'UMRA.wsgi.application'
 
-
-# Database
-# https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -90,39 +85,18 @@ DATABASES = {
     }
 }
 
-# Password validation
-# https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
-
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
-
-# Internationalization
-# https://docs.djangoproject.com/en/5.1/topics/i18n/
-
-LANGUAGE_CODE = 'ky'  # Default language code should match one in LANGUAGES
-
-
+LANGUAGE_CODE = 'ky'
 TIME_ZONE = "Asia/Bishkek"
-
 USE_I18N = True
-
 USE_L10N = True
-
 USE_TZ = True
-
 
 LANGUAGES = (
     ('ky', 'Kyrgyz'),
@@ -132,30 +106,25 @@ LANGUAGES = (
 DEFAULT_LANGUAGE = 'ky'
 MODELTRANSLATION_DEFAULT_LANGUAGE = 'ky'
 
-
 STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
-# Media files
 MEDIA_URL = 'media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
-
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
-
 TELEGRAM_GROUP_IDS = {
     'Bishkek': os.getenv('TELEGRAM_GROUP_BISHKEK'),
     'Osh': os.getenv('TELEGRAM_GROUP_OSH'),
 }
 
-
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
+    ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.AllowAny',
     ],
@@ -165,76 +134,12 @@ REST_FRAMEWORK = {
     ],
 }
 
-JAZZMIN_SETTINGS = {
-    "site_title": "Lider-Umra",
-    "site_header": "Lider-Umra",
-    "site_logo_classes": "img-circle",
-    "site_brand": "Админ-панель",
-    "welcome_sign": "Добро пожаловать в Lider-Umra",
-    "copyright": "Lider-Umra",
-    "search_model": ["auth.User"],
-    "topmenu_links": [
-        {"name": "Главная", "url": "admin:index", "permissions": ["auth.view_user"]},
-        {"app": "Lider-Umra"},
-        {"model": "auth.User"},
-    ],
-    "default_icon_parents": "fas fa-circle",
-    "default_icon_children": "fas fa-dot-circle",
-    "show_sidebar": True,
-    "navigation_expanded": True,
-    "changeform_format": "horizontal_tabs",
-    "language_chooser": False,
-    "changeform_format_overrides": {
-        "auth.user": "collapsible",
-        "auth.group": "vertical_tabs",
-    },
-    "icons": {
-        "auth.Group": "fas fa-users",
-        "auth.User": "fas fa-user",
-    }
-}
-
-JAZZMIN_UI_TWEAKS = {
-    "navbar_small_text": False,
-    "footer_small_text": False,
-    "body_small_text": False,
-    "brand_small_text": False,
-    "brand_colour": "navbar-dark",
-    "accent": "accent-primary",
-    "navbar": "navbar-white navbar-light",
-    "no_navbar_border": False,
-    "navbar_fixed": True,
-    "layout_boxed": False,
-    "footer_fixed": False,
-    "sidebar_fixed": True,
-    "sidebar": "sidebar-dark-warning",
-    "sidebar_nav_small_text": False,
-    "sidebar_disable_expand": False,
-    "sidebar_nav_child_indent": False,
-    "sidebar_nav_compact_style": False,
-    "sidebar_nav_legacy_style": True,
-    "sidebar_nav_flat_style": False,
-    "theme": "default",
-    "dark_mode_theme": None,
-    "button_classes": {
-        "primary": "btn-outline-primary",
-        "secondary": "btn-outline-secondary",
-        "info": "btn-outline-info",
-        "warning": "btn-outline-warning",
-        "danger": "btn-outline-danger",
-        "success": "btn-outline-success",
-    },
-    "actions_sticky_top": True,
-}
-
-
 CSRF_TRUSTED_ORIGINS = [
     "https://www.liderumra.kg",
     "https://liderumra.kg",
 ]
 
-CORS_ALLOW_ALL_ORIGINS = False  # Запрещаем все, кроме указанных ниже
-
+CORS_ALLOW_ALL_ORIGINS = False
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
@@ -242,26 +147,13 @@ CORS_ALLOWED_ORIGINS = [
     "https://www.liderumra.kg"
 ]
 
-CORS_ALLOW_METHODS = [
-    'DELETE', 'GET', 'OPTIONS', 'PATCH', 'POST', 'PUT',
-]
-
-CORS_ALLOW_HEADERS = [
-    'accept',
-    'accept-encoding',
-    'accept-language',
-    'authorization',
-    'content-type',
-    'dnt',
-    'origin',
-    'user-agent',
-    'x-csrftoken',
-    'x-requested-with',
-]
-
+CORS_ALLOW_METHODS = ['DELETE', 'GET', 'OPTIONS', 'PATCH', 'POST', 'PUT']
+CORS_ALLOW_HEADERS = ['accept', 'accept-encoding', 'authorization', 'content-type', 'dnt', 'origin', 'user-agent', 'x-csrftoken', 'x-requested-with']
 CORS_EXPOSE_HEADERS = ['Content-Length', 'X-CSRFToken']
 CORS_ALLOW_CREDENTIALS = True
 
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
 
 SWAGGER_SETTINGS = {
     'SECURITY_DEFINITIONS': {
@@ -274,29 +166,69 @@ SWAGGER_SETTINGS = {
     'USE_SESSION_AUTH': False,
     'JSON_EDITOR': True,
     'OPERATIONS_SORTER': 'alpha',
-    'DEFAULT_FIELD_INSPECTORS': [
-        'drf_yasg.inspectors.CamelCaseJSONFilter',
-        'drf_yasg.inspectors.ReferencingSerializerInspector',
-        'drf_yasg.inspectors.RelatedFieldInspector',
-        'drf_yasg.inspectors.ChoiceFieldInspector',
-        'drf_yasg.inspectors.FileFieldInspector',
-        'drf_yasg.inspectors.DictFieldInspector',
-        'drf_yasg.inspectors.JSONFieldInspector',
-        'drf_yasg.inspectors.SerializerMethodFieldInspector',
-        'drf_yasg.inspectors.SimpleFieldInspector',
-        'drf_yasg.inspectors.StringDefaultFieldInspector',
-    ],
-    'DEFAULT_FILTER_INSPECTORS': [
-        'drf_yasg.inspectors.CoreAPICompatInspector',
-    ],
-    'DEFAULT_PAGINATOR_INSPECTORS': [
-        'drf_yasg.inspectors.DjangoRestResponsePagination',
-        'drf_yasg.inspectors.CoreAPICompatInspector',
-    ],
-    'DEFAULT_PARSER_CLASSES': [
-        'rest_framework.parsers.JSONParser',
-        'rest_framework.parsers.FormParser',
-        'rest_framework.parsers.MultiPartParser',
-    ],
-    'DEFAULT_AUTO_SCHEMA_CLASS': 'drf_yasg.inspectors.SwaggerAutoSchema',
+}
+
+JAZZMIN_SETTINGS = {
+    "site_title": "Lider Umra",
+    "site_header": "Lider Umra",
+    "site_brand": "Lider Umra",
+    "site_logo_classes": "img-circle",
+    "welcome_sign": "Добро пожаловать в администратора Lider Umra",
+    "copyright": "Lider Umra © 2023-2025",
+    "user_avatar": None,
+    "show_sidebar": True,
+    "navigation_expanded": True,
+    "sidebar_fixed": True,
+    "sidebar_collapsible": True,
+    "custom_links": {
+        "tour": [{
+            "name": "Панель мониторинга",
+            "url": "admin:index",
+            "icon": "fas fa-tachometer-alt",
+        }],
+    },
+    "icons": {
+        "auth": "fas fa-users-cog",
+        "auth.user": "fas fa-user",
+        "auth.Group": "fas fa-users",
+        "crm.Client": "fas fa-user-tag",
+        "crm.Manager": "fas fa-user-tie",
+        "tour.Package": "fas fa-box-open",
+        "tour.Hotel": "fas fa-hotel",
+        "blog.Post": "fas fa-newspaper",
+    },
+    "default_icon_parents": "fas fa-chevron-circle-right",
+    "default_icon_children": "fas fa-circle",
+    "related_modal_active": True,
+    "related_modal_back": False,
+    "hide_apps": [],
+    "hide_models": [],
+    "changeform_format": "horizontal_tabs",
+    "custom_css": None,
+    "custom_js": None,
+    "show_ui_builder": False,
+}
+
+JAZZMIN_UI_TWEAKS = {
+    "navbar_small_text": False,
+    "footer_small_text": False,
+    "body_small_text": False,
+    "brand_small_text": False,
+    "brand_colour": "navbar-primary",
+    "accent": "accent-primary",
+    "navbar": "navbar-dark",
+    "no_navbar_border": False,
+    "navbar_fixed": False,
+    "layout_boxed": False,
+    "footer_fixed": False,
+    "sidebar_fixed": True,
+    "sidebar": "sidebar-dark-primary",
+    "sidebar_nav_small_text": False,
+    "sidebar_disable_expand": False,
+    "sidebar_nav_child_indent": False,
+    "sidebar_nav_compact_style": False,
+    "sidebar_nav_legacy_style": False,
+    "sidebar_nav_flat_style": False,
+    "theme": "default",
+    "dark_mode_theme": None,
 }
