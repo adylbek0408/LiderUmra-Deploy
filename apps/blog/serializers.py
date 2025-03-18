@@ -17,9 +17,22 @@ class BlogSerializer(serializers.ModelSerializer):
 
 
 class LessonSerializer(serializers.ModelSerializer):
+    youtube_embed_url = serializers.SerializerMethodField()
+    thumbnail_url = serializers.SerializerMethodField()
+
     class Meta:
         model = Lesson
-        fields = ['id', 'title', 'rich', 'created_at', 'video_url']
+        fields = ['id', 'title', 'rich', 'created_at', 'video_url', 'youtube_id', 'youtube_embed_url', 'thumbnail_url']
+
+    def get_youtube_embed_url(self, obj):
+        if obj.youtube_id:
+            return f"https://www.youtube.com/embed/{obj.youtube_id}"
+        return None
+
+    def get_thumbnail_url(self, obj):
+        if obj.youtube_id:
+            return f"https://img.youtube.com/vi/{obj.youtube_id}/maxresdefault.jpg"
+        return None
 
 
 class FAQSerializer(serializers.ModelSerializer):

@@ -1,4 +1,3 @@
-# UMRA/utils.py
 from functools import wraps
 from django.utils import translation
 
