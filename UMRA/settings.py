@@ -44,9 +44,9 @@ SITE_ID = 1  # Добавлено для корректной работы
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
-    'UMRA.middleware.LanguageHeaderMiddleware',
     'django.middleware.locale.LocaleMiddleware',
+    'UMRA.middleware.LanguageHeaderMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -103,6 +103,10 @@ LANGUAGES = (
     ('ru', 'Russian'),
 )
 
+LOCALE_PATHS = [
+    os.path.join(BASE_DIR, 'locale'),
+]
+
 DEFAULT_LANGUAGE = 'ky'
 MODELTRANSLATION_DEFAULT_LANGUAGE = 'ky'
 
@@ -147,8 +151,9 @@ CORS_ALLOWED_ORIGINS = [
 CORS_ALLOW_METHODS = ['DELETE', 'GET', 'OPTIONS', 'PATCH', 'POST', 'PUT']
 CORS_ALLOW_HEADERS = [
     'accept', 'accept-encoding', 'authorization', 'content-type', 'dnt',
-    'origin', 'user-agent', 'x-csrftoken', 'x-requested-with'
+    'origin', 'user-agent', 'x-csrftoken', 'x-requested-with', 'accept-language'
 ]
+
 CORS_EXPOSE_HEADERS = ['Content-Length', 'X-CSRFToken', 'Access-Control-Allow-Origin']
 CORS_ALLOW_CREDENTIALS = True
 

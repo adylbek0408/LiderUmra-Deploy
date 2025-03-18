@@ -16,3 +16,4 @@ class LanguageHeaderMiddleware(MiddlewareMixin):
         lang = getattr(request, '_language', 'ky')
         response['Content-Language'] = lang
         return response
+
